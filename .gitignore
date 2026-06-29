@@ -1,0 +1,38 @@
+# Créer le .gitignore
+@"
+# Environnement Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Airflow
+airflow_home/logs/
+airflow_home/*.db
+airflow_home/*.cfg
+airflow_home/*.pid
+
+# Données brutes (trop volumineuses pour Git)
+data/raw/
+data/processed/
+
+# Logs applicatifs
+logs/
+
+# Credentials (JAMAIS dans Git !)
+config/secrets.env
+config/api_keys.py
+.env
+
+# Outils
+.ruff_cache/
+.pytest_cache/
+"@ | Out-File -Encoding utf8 .gitignore
+
+# Initialiser Git
+git init
+git add .
+git commit -m "init: structure hexagonale CheckIt.AI + environnement uv"
