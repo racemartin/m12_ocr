@@ -7,8 +7,8 @@
 #   - Maldita ES     (maldita.es)
 #
 # Lancement :
-#   python3 scripts/test_bs4.py
-#   python3 scripts/test_bs4.py --source fullfact
+#   uv run scripts/test_bs4.py
+#   uv run sscripts/test_bs4.py --source fullfact
 # ==============================================================================
 
 # --- Bibliothèque standard ---------------------------------------------------
