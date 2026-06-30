@@ -1,5 +1,8 @@
 # Créer le .gitignore
 @"
+
+.DS_Store
+
 # Environnement Python
 .venv/
 __pycache__/
