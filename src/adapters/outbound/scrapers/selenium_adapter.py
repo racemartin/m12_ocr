@@ -20,6 +20,7 @@
 #
 # Port implémenté : ScraperPort
 # Outil           : Selenium 4 + Chrome headless (WebDriver Manager)
+# Test            : uv run scripts/test_selenium.py
 # ==============================================================================
 
 # --- Bibliothèque standard ---------------------------------------------------
