@@ -560,22 +560,22 @@ après chargement. La méthodologie d'inspection diffère donc :
 
 ## 4. Tableau Comparatif des Sources
 
-| | Source | Adaptateur | Langue | Labels |
-|-|--------|-----------|--------|--------|
-| <img src="images/afp_factual_logo.png" height="20"> | AFP Factuel | <img src="images/feedparser_logo.png" height="16"> Feedparser | FR | Explicites titre |
-| <img src="images/eu_vs_disinfo.png" height="20"> | EUvsDisinfo | <img src="images/feedparser_logo.png" height="16"> Feedparser | EN | Tous FAKE |
-| <img src="images/les_observateurs_logo.png" height="20"> | Les Observateurs | <img src="images/feedparser_logo.png" height="16"> Feedparser | FR | 3 classes |
-| <img src="images/hoaxbuster_logo.png" height="20"> | Hoaxbuster | <img src="images/feedparser_logo.png" height="16"> Feedparser | FR | Explicites |
-| <img src="images/newdata_io.png" height="20"> | NewsData.io | <img src="images/requests_logo.png" height="16"> Requests | Multi | Via MBFC |
-| <img src="images/claim_buster_logo.png" height="20"> | ClaimBuster | <img src="images/requests_logo.png" height="16"> Requests | Multi | Enrichissement score |
-| <img src="images/media_bias_fact_check.png" height="20"> | MBFC | <img src="images/requests_logo.png" height="16"> Requests | Multi | Inférence label |
-| <img src="images/full_fact.png" height="20"> | FullFact UK | <img src="images/beautifull_soup_logo.png" height="16"> BS4 | EN | 4 classes |
-| <img src="images/correctiv_logo.png" height="20"> | Correctiv DE | <img src="images/beautifull_soup_logo.png" height="16"> BS4 | DE | 3 classes |
-| <img src="images/maldita_es.png" height="20"> | Maldita ES | <img src="images/beautifull_soup_logo.png" height="16"> BS4 | ES | 4 classes |
-| <img src="images/politi_fact_logo.png" height="20"> | PolitiFact | <img src="images/scrapy_logo.png" height="16"> Scrapy | EN | 6 classes |
-| <img src="images/les_surligneurs_logo.png" height="20"> | Les Surligneurs | <img src="images/scrapy_logo.png" height="16"> Scrapy | FR | 5 classes |
-| <img src="images/logically_facts_logo.png" height="20"> | Logically | <img src="images/selenium_logo.png" height="16"> Selenium | EN | 3 classes |
-| <img src="images/le_monde_fr_logo.png" height="20"> | Decodex | <img src="images/selenium_logo.png" height="16"> Selenium | FR | 3 classes |
+| Adaptateur | | Source | Langue | Labels |
+|-----------|-----|--------|--------|--------|
+| <img src="images/feedparser_logo.png" height="16"> Feedparser | <img src="images/afp_factual_logo.png" height="20"> | AFP Factuel | FR | Explicites titre |
+| <img src="images/feedparser_logo.png" height="16"> Feedparser | <img src="images/eu_vs_disinfo.png" height="20"> | EUvsDisinfo | EN | Tous FAKE |
+| <img src="images/feedparser_logo.png" height="16"> Feedparser | <img src="images/les_observateurs_logo.png" height="20"> | Les Observateurs | FR | 3 classes |
+| <img src="images/feedparser_logo.png" height="16"> Feedparser | <img src="images/hoaxbuster_logo.png" height="20"> | Hoaxbuster | FR | Explicites |
+| <img src="images/requests_logo.png" height="16"> Requests | <img src="images/newdata_io.png" height="20"> | NewsData.io | Multi | Via MBFC |
+| <img src="images/requests_logo.png" height="16"> Requests | <img src="images/claim_buster_logo.png" height="20"> | ClaimBuster | Multi | Enrichissement score |
+| <img src="images/requests_logo.png" height="16"> Requests | <img src="images/media_bias_fact_check.png" height="20"> | MBFC | Multi | Inférence label |
+| <img src="images/beautifull_soup_logo.png" height="16"> BS4 | <img src="images/full_fact.png" height="20"> | FullFact UK | EN | 4 classes |
+| <img src="images/beautifull_soup_logo.png" height="16"> BS4 | <img src="images/correctiv_logo.png" height="20"> | Correctiv DE | DE | 3 classes |
+| <img src="images/beautifull_soup_logo.png" height="16"> BS4 | <img src="images/maldita_es.png" height="20"> | Maldita ES | ES | 4 classes |
+| <img src="images/scrapy_logo.png" height="16"> Scrapy | <img src="images/politi_fact_logo.png" height="20"> | PolitiFact | EN | 6 classes |
+| <img src="images/scrapy_logo.png" height="16"> Scrapy | <img src="images/les_surligneurs_logo.png" height="20"> | Les Surligneurs | FR | 5 classes |
+| <img src="images/selenium_logo.png" height="16"> Selenium | <img src="images/logically_facts_logo.png" height="20"> | Logically | EN | 3 classes |
+| <img src="images/selenium_logo.png" height="16"> Selenium | <img src="images/le_monde_fr_logo.png" height="20"> | Decodex | FR | 3 classes |
 
 ---
 
