@@ -33,6 +33,12 @@ from typing import Any, Dict, List, Optional  # annotations de types
 
 # --- Dépendances externes ----------------------------------------------------
 import requests  # appels HTTP REST
+from dotenv import load_dotenv  # chargement automatique du fichier .env
+
+# --- Chargement variables d'environnement -------------------------------------
+# Lit .env à la racine du projet si présent — sans écraser les
+# variables déjà définies par l'environnement (Airflow Variables, etc.)
+load_dotenv()
 
 # --- Domaine -----------------------------------------------------------------
 from src.domain.exceptions import CheckItErreur, ImageUrlVideErreur
