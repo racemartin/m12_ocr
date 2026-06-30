@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/images/CheckIt_AI.png" alt="CheckIt.AI" width="320">
+  <img src="docs/images/CheckIt_AI.png" alt="CheckIt.AI" width="150">
 
   # CheckIt.AI — Pipeline d'extraction de données multimodales
   **Détection de Fake News · Architecture Hexagonale · Apache Airflow**
