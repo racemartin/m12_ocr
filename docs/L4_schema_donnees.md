@@ -9,7 +9,7 @@ Représentation métier indépendante de toute technologie.
 Langage compréhensible par les parties prenantes non techniques.
 
 
-<img src="images/diagrame_modèle_conceptuel.png" width="800">
+<img src="images/diagrame_modele_conceptuel.png" width="800">
 
 
 ```mermaid
