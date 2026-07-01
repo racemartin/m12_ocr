@@ -30,7 +30,7 @@ erDiagram
         string   image_url
         datetime captured_at
         string   lang
-        json     metadata
+        string   metadata
     }
 
     LABEL {
