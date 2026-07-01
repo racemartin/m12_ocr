@@ -1,4 +1,4 @@
-# CheckIt.AI — Schéma de Données Finalisé
+# CheckIt.AI.  Schéma de Données Finalisé
 **Livrable L4** | Ingénieur Data Junior | Juin 2026
 
 ---
@@ -71,7 +71,7 @@ erDiagram
 
 ---
 
-## 2. Schéma Physique — PostgreSQL (recommandé)
+## 2. Schéma Physique.  PostgreSQL (recommandé)
 
 Structure SQL concrète avec types, index et contraintes d'intégrité.
 
@@ -205,7 +205,7 @@ Pour les cas où les métadonnées sont très variables entre sources.
 erDiagram
     publications_collection {
         ObjectId _id            PK  "généré automatiquement"
-        string   id                 "SHA-256 — déduplication"
+        string   id                 "SHA-256.  déduplication"
         string   title
         string   content
         string   image_url
@@ -213,7 +213,7 @@ erDiagram
         string   declared_label    "REAL | FAKE"
         ISODate  captured_at
         string   lang
-        Object   metadata          "BSON — schéma libre"
+        Object   metadata          "BSON.  schéma libre"
     }
 ```
 
@@ -247,7 +247,7 @@ db.publications.createIndex({ "id": 1 }, { unique: true })
 
 ---
 
-## 4. Flux de Données — Pipeline ETL
+## 4. Flux de Données.  Pipeline ETL
 
 ```mermaid
 flowchart TD
@@ -269,13 +269,13 @@ flowchart TD
 
 | Critère | PostgreSQL ✅ | MongoDB |
 |---------|--------------|---------|
-| Labels binaires REAL/FAKE | Idéal — ENUM strict | Possible |
-| Requêtes analytiques | SQL natif — performant | Agrégations complexes |
+| Labels binaires REAL/FAKE | Idéal.  ENUM strict | Possible |
+| Requêtes analytiques | SQL natif.  performant | Agrégations complexes |
 | Jointures sources/runs | Nativement supporté | Lookup pipeline |
-| Métadonnées variables | JSONB — flexible | BSON natif |
+| Métadonnées variables | JSONB.  flexible | BSON natif |
 | Intégrité référentielle | Contraintes FK | Pas de FK natif |
 | **Recommandation** | **✅ Pour ce projet** | Alternatif si métadonnées très hétérogènes |
 
 ---
 
-*CheckIt.AI — Schéma de données L4 — Juin 2026*
+*CheckIt.AI.  Schéma de données L4.  Juin 2026*
