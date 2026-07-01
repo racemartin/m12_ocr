@@ -243,13 +243,20 @@ class FeedparserAdapter(ScraperPort):
                 label   = self._inférer_label(titre, entrée)
 
                 # -- Validation paire texte-image -----------------------------
+                # if not image:
+                #    rejetées += 1
+                #    self._log.LEVEL_5_WARNING(
+                #        "FeedparserAdapter",
+                #        f"Image absente : {titre[:50]}",
+                #    )
+                #    continue
+                
                 if not image:
-                    rejetées += 1
                     self._log.LEVEL_5_WARNING(
                         "FeedparserAdapter",
-                        f"Image absente : {titre[:50]}",
+                        f"Image absente (mais acceptée) : {titre[:50]}",
                     )
-                    continue
+                    image = "" # O None, según requiera tu modelo de datos
 
                 # -- Création de la Publication --------------------------------
                 pub = Publication(

@@ -383,13 +383,13 @@ langue, taux d'intégrité) et sauvegarde le résultat en JSON dans
 
 | N° | Livrable | Format | Statut |
 |----|----------|--------|--------|
-| L1 | Rapport d'exploration des sources | `docs/L1_rapport_exploration_sources.md` | ✅ |
-| L2 | Scripts d'extraction automatisée | `src/adapters/outbound/scrapers/*.py` | ✅ |
-| L3 | Pipeline de transformation | `src/application/transform_service.py` | ⬜ À venir |
-| L4 | Schéma de données finalisé | `docs/L4_schema_donnees.md` (Mermaid) | ✅ |
-| L5 | Flux ETL Airflow | `src/adapters/inbound/airflow_dag.py` | ⬜ À venir |
-| L6 | Tableau de bord KPI Streamlit | `src/adapters/outbound/monitoring/` | ⬜ À venir |
-| L7 | Plan de monitoring | `docs/L7_plan_monitoring.md` | ⬜ À venir |
+| L1 | Rapport d'exploration des sources | [`docs/L1_rapport_exploration_sources.md`](docs/L1_rapport_exploration_sources.md) | ✅ |
+| L2 | Scripts d'extraction automatisée | [`src/adapters/outbound/scrapers/*.py`](src/adapters/outbound/scrapers/) | ✅ |
+| L3 | Pipeline de transformation | [`src/application/transform_service.py`](src/application/transform_service.py) | ⬜ À venir |
+| L4 | Schéma de données finalisé | [`docs/L4_schema_donnees.md`](docs/L4_schema_donnees.md) (Mermaid) | ✅ |
+| L5 | Flux ETL Airflow | [`src/adapters/inbound/airflow_dag.py`](src/adapters/inbound/airflow_dag.py) | ⬜ À venir |
+| L6 | Tableau de bord KPI Streamlit | [`src/adapters/outbound/monitoring/`](src/adapters/outbound/monitoring/) | ⬜ À venir |
+| L7 | Plan de monitoring | [`docs/L7_plan_monitoring.md`](docs/L7_plan_monitoring.md) | ⬜ À venir |
 
 ---
 

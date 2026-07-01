@@ -15,7 +15,7 @@ Langage compréhensible par les parties prenantes non techniques.
 ```mermaid
 erDiagram
     SOURCE {
-        string nom_domaine        PK
+        string nom_domaine
         string type_source
         string langue
         string url_base
@@ -24,7 +24,7 @@ erDiagram
     }
 
     PUBLICATION {
-        string   id            PK
+        string   id
         string   title
         string   content
         string   image_url
@@ -34,13 +34,13 @@ erDiagram
     }
 
     LABEL {
-        string valeur           PK
+        string valeur
         string description
         string methode_inference
     }
 
     EXTRACTION_RUN {
-        string   run_id         PK
+        string   run_id
         datetime started_at
         datetime finished_at
         int      nb_extraites
@@ -50,15 +50,15 @@ erDiagram
     }
 
     RUN_SOURCES {
-        string run_id           PK
-        string nom_domaine      PK
+        string run_id
+        string nom_domaine
     }
 
-    SOURCE         ||--o{ PUBLICATION   : "produit"
-    LABEL          ||--o{ PUBLICATION   : "qualifie"
-    EXTRACTION_RUN ||--o{ PUBLICATION   : "genere"
-    EXTRACTION_RUN ||--o{ RUN_SOURCES   : "couvre"
-    SOURCE         ||--o{ RUN_SOURCES   : "est extraite dans"
+    SOURCE         ||--o{ PUBLICATION  : "produit"
+    LABEL          ||--o{ PUBLICATION  : "qualifie"
+    EXTRACTION_RUN ||--o{ PUBLICATION  : "genere"
+    EXTRACTION_RUN ||--o{ RUN_SOURCES  : "couvre"
+    SOURCE         ||--o{ RUN_SOURCES  : "est extraite dans"
 ```
 
 ### Cardinalités
@@ -68,7 +68,6 @@ erDiagram
 | SOURCE → PUBLICATION | 1 à plusieurs | Une source produit N publications |
 | LABEL → PUBLICATION | 1 à plusieurs | Un label qualifie N publications |
 | EXTRACTION_RUN → PUBLICATION | 1 à plusieurs | Un run génère N publications |
-| EXTRACTION_RUN → SOURCE | N à N (via RUN_SOURCES) | Un run extrait depuis plusieurs sources simultanément |
 
 ---
 
@@ -76,27 +75,24 @@ erDiagram
 
 Structure SQL concrète avec types, index et contraintes d'intégrité.
 
-
-<img src="images/schema_physique_postgresql.png" width="600">
-
 ```mermaid
 erDiagram
     publications {
-        VARCHAR_64   id              PK  "SHA-256 titre+domaine"
-        TEXT         title           NK  "NOT NULL"
-        TEXT         content             "corps texte principal"
-        VARCHAR_2048 image_url       NK  "NOT NULL — URL validee"
-        VARCHAR_255  source_domain   NK  "NOT NULL — domaine origine"
-        VARCHAR_4    declared_label  NK  "NOT NULL — REAL|FAKE"
-        TIMESTAMP    captured_at         "DEFAULT NOW()"
-        CHAR_2       lang                "DEFAULT fr"
-        JSONB        metadata            "champs secondaires"
-        VARCHAR_64   run_id              "FK extraction_runs"
+        VARCHAR_64   id
+        TEXT         title
+        TEXT         content
+        VARCHAR_2048 image_url
+        VARCHAR_255  source_domain
+        VARCHAR_4    declared_label
+        TIMESTAMP    captured_at
+        CHAR_2       lang
+        JSONB        metadata
+        VARCHAR_64   run_id
     }
 
     sources {
-        VARCHAR_255  nom_domaine         PK
-        VARCHAR_50   type_source             "api|rss|html|scrapy|selenium"
+        VARCHAR_255  nom_domaine
+        VARCHAR_50   type_source
         VARCHAR_10   langue
         VARCHAR_2048 url_base
         VARCHAR_100  methode_extraction
@@ -106,7 +102,7 @@ erDiagram
     }
 
     extraction_runs {
-        VARCHAR_64   run_id              PK  "DAG run_id Airflow"
+        VARCHAR_64   run_id
         TIMESTAMP    started_at
         TIMESTAMP    finished_at
         INT          nb_extraites
@@ -117,14 +113,14 @@ erDiagram
     }
 
     run_sources {
-        VARCHAR_64   run_id              PK  "FK extraction_runs"
-        VARCHAR_255  nom_domaine         PK  "FK sources"
+        VARCHAR_64   run_id
+        VARCHAR_255  nom_domaine
     }
 
-    publications  }o--|| sources          : "source_domain FK"
-    publications  }o--|| extraction_runs  : "run_id FK"
-    run_sources   }o--|| extraction_runs  : "run_id FK"
-    run_sources   }o--|| sources          : "nom_domaine FK"
+    publications  }o--|| sources          : "source_domain"
+    publications  }o--|| extraction_runs  : "run_id"
+    run_sources   }o--|| extraction_runs  : "run_id"
+    run_sources   }o--|| sources          : "nom_domaine"
 ```
 
 ### Définition SQL complète
@@ -252,10 +248,6 @@ db.publications.createIndex({ "id": 1 }, { unique: true })
 ---
 
 ## 4. Flux de Données — Pipeline ETL
-
-
-
-<img src="images/flux_de_donnees_pipeline.png" width="300">
 
 ```mermaid
 flowchart TD
