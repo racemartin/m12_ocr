@@ -9,6 +9,8 @@
 # Entités définies :
 #   LabelVéracité  — énumération REAL / FAKE
 #   Publication    — entité centrale du pipeline ETL
+#   Source         — configuration d'une source de données
+#   ExtractionRun  — statistiques d'une exécution du pipeline
 # ==============================================================================
 
 # --- Bibliothèque standard uniquement ---------------------------------------
@@ -16,7 +18,7 @@ import hashlib    # calcul de l'identifiant SHA-256 unique
 from dataclasses import dataclass, field  # déclaration d'entités sans boilerplate
 from datetime    import datetime          # horodatage de capture
 from enum        import Enum             # énumération typée des labels
-from typing      import Optional         # champs optionnels typés
+from typing      import List, Optional   # champs optionnels et listes typées
 
 
 # ==============================================================================
@@ -173,4 +175,172 @@ class Publication:
             f"source={self.source_domain}, "
             f"label={self.declared_label.value}, "
             f"lang={self.lang})"
+        )
+
+
+# ==============================================================================
+# ENTITÉ : Source
+# ==============================================================================
+@dataclass
+class Source:
+    """
+    Configuration d'une source de données du pipeline CheckIt.AI.
+
+    Représente une source d'extraction qualifiée — fact-checker,
+    API ou flux RSS — avec ses caractéristiques techniques et
+    ses droits d'usage vérifiés.
+
+    Correspond à l'entité SOURCE du modèle conceptuel (L4).
+    Les sélecteurs CSS spécifiques restent dans les adaptateurs
+    (infrastructure) — seule la configuration métier vit ici.
+
+    Exemple d'utilisation
+    ---------------------
+    source = Source(
+        nom_domaine        = "fullfact.org",
+        type_source        = "html",
+        langue             = "en",
+        url_base           = "https://fullfact.org/latest/",
+        méthode_extraction = "bs4",
+        droits_usage       = "scraping académique autorisé",
+    )
+    """
+
+    # --- Champs obligatoires -------------------------------------------------
+    nom_domaine        : str   # domaine identifiant la source
+    type_source        : str   # "rss" | "api" | "html" | "scrapy" | "selenium"
+    langue             : str   # code ISO 639-1 principal de la source
+    url_base           : str   # URL d'entrée de l'extraction
+    méthode_extraction : str   # adaptateur utilisé
+    droits_usage       : str   # statut légal vérifié
+
+    # --- Champs optionnels ---------------------------------------------------
+    quota_journalier   : Optional[int] = None   # limite API/jour (None = illimité)
+    nécessite_clé_api  : bool          = False  # True si clé API requise
+
+    # --------------------------------------------------------------------------
+    def vers_dict(self) -> dict:
+        """Sérialise la source en dictionnaire compatible JSON."""
+        return {
+            "nom_domaine"       : self.nom_domaine,
+            "type_source"       : self.type_source,
+            "langue"            : self.langue,
+            "url_base"          : self.url_base,
+            "méthode_extraction": self.méthode_extraction,
+            "droits_usage"      : self.droits_usage,
+            "quota_journalier"  : self.quota_journalier,
+            "nécessite_clé_api" : self.nécessite_clé_api,
+        }
+
+    # --------------------------------------------------------------------------
+    def __repr__(self) -> str:
+        """Représentation lisible pour les logs."""
+        return (
+            f"Source("
+            f"domaine={self.nom_domaine}, "
+            f"type={self.type_source}, "
+            f"langue={self.langue})"
+        )
+
+
+# ==============================================================================
+# ENTITÉ : ExtractionRun
+# ==============================================================================
+@dataclass
+class ExtractionRun:
+    """
+    Statistiques d'une exécution complète du pipeline ETL.
+
+    Enregistre les métriques de chaque run du DAG Airflow —
+    utilisées par le dashboard Streamlit (L6) et le plan de
+    monitoring (L7) pour calculer les KPIs en temps réel.
+
+    Correspond à l'entité EXTRACTION_RUN du modèle conceptuel (L4).
+    Un run couvre plusieurs sources simultanément — le DAG Airflow
+    appelle tous les adaptateurs dans un même extract_task.
+
+    Attributs calculés automatiquement
+    -----------------------------------
+    taux_intégrité : pourcentage d'entrées valides sur le total extrait.
+    durée_secondes : durée totale du run en secondes.
+
+    Exemple d'utilisation
+    ---------------------
+    run = ExtractionRun(
+        run_id          = "checkit_pipeline__2026-07-01T08:00:00",
+        started_at      = datetime(2026, 7, 1, 8, 0, 0),
+        finished_at     = datetime(2026, 7, 1, 8, 12, 34),
+        nb_extraites    = 150,
+        nb_valides      = 132,
+        nb_rejetées     = 18,
+        sources_domains = ["afp.com", "fullfact.org", "politifact.com"],
+    )
+    """
+
+    # --- Champs obligatoires -------------------------------------------------
+    run_id          : str        # identifiant du DAG run Airflow
+    started_at      : datetime   # horodatage de début
+    finished_at     : datetime   # horodatage de fin
+    nb_extraites    : int        # total d'entrées extraites
+    nb_valides      : int        # entrées passant la validation
+    nb_rejetées     : int        # entrées rejetées (texte ou image manquant)
+    sources_domains : List[str]  = field(default_factory=list)
+                                   # domaines extraits dans ce run
+
+    # --- Champs calculés automatiquement -------------------------------------
+    taux_intégrité : float = field(init=False)  # % entrées valides
+    durée_secondes : float = field(init=False)  # durée totale en secondes
+
+    # --------------------------------------------------------------------------
+    def __post_init__(self) -> None:
+        """Calcule les métriques dérivées après initialisation."""
+        # -- Taux d'intégrité -------------------------------------------------
+        total = self.nb_extraites or 1  # évite la division par zéro
+        self.taux_intégrité = round(self.nb_valides / total * 100, 2)
+
+        # -- Durée totale en secondes -----------------------------------------
+        self.durée_secondes = (
+            self.finished_at - self.started_at
+        ).total_seconds()
+
+    # --------------------------------------------------------------------------
+    @property
+    def est_sain(self) -> bool:
+        """
+        Indique si le run respecte le seuil d'intégrité minimum.
+
+        Le seuil de 85% est défini dans les specs techniques (section 7.1).
+        En dessous, une alerte CRITIQUE est déclenchée dans le dashboard.
+
+        Retourne
+        --------
+        bool
+            True si taux_intégrité >= 85%.
+        """
+        return self.taux_intégrité >= 85.0
+
+    # --------------------------------------------------------------------------
+    def vers_dict(self) -> dict:
+        """Sérialise le run en dictionnaire compatible JSON."""
+        return {
+            "run_id"          : self.run_id,
+            "started_at"      : self.started_at.isoformat(),
+            "finished_at"     : self.finished_at.isoformat(),
+            "nb_extraites"    : self.nb_extraites,
+            "nb_valides"      : self.nb_valides,
+            "nb_rejetées"     : self.nb_rejetées,
+            "sources_domains" : self.sources_domains,
+            "taux_intégrité"  : self.taux_intégrité,
+            "durée_secondes"  : self.durée_secondes,
+            "est_sain"        : self.est_sain,
+        }
+
+    # --------------------------------------------------------------------------
+    def __repr__(self) -> str:
+        """Représentation lisible pour les logs."""
+        return (
+            f"ExtractionRun("
+            f"run_id={self.run_id[:20]}..., "
+            f"intégrité={self.taux_intégrité}%, "
+            f"sain={self.est_sain})"
         )
