@@ -635,6 +635,38 @@ class Publication:
 | **robots.txt** | Vérifié pour FullFact ✅ Correctiv ✅ PolitiFact ✅ |
 | **Déduplication** | SHA-256 sur `title + source_domain`.  calculé, jamais extrait |
 
+
+## Distinction entre opinions controversées et désinformation
+
+Cette distinction est fondamentale pour la qualité des labels du dataset.
+
+**Opinion controversée** — subjective, légitime, protégée par la liberté
+d'expression :
+> "L'immigration est une menace pour la culture française."
+> "Le capitalisme est un système injuste."
+
+Ces contenus ne peuvent pas être labellisés FAKE — ils expriment un point
+de vue, pas un fait vérifiable.
+
+**Désinformation** — affirmation factuelle objectivement fausse,
+diffusée intentionnellement :
+> "Le vaccin COVID contient une puce électronique." → FAKE (réfuté)
+> "Le président a signé la loi X le 3 mars." → vérifiable, REAL ou FAKE
+
+### Comment CheckIt.AI gère cette distinction
+
+Toutes les sources sélectionnées sont des **fact-checkers certifiés IFCN**
+ou des bases académiques — ils vérifient uniquement des affirmations
+factuelles, jamais des opinions.
+
+Le label binaire `REAL / FAKE` de `LabelVéracité` s'applique donc
+**uniquement à des affirmations factuellement vérifiables** — la
+distinction est garantie en amont par le choix des sources, pas par
+le modèle de données.
+
+Les entrées ambiguës (MISLEADING, HALF-TRUE, opinions) sont mappées
+vers FAKE par défaut — prudence plutôt que tolérance.
+
 ---
 
 *<img src="images/CheckIt_AI.png" height="16"> CheckIt.AI.  Rapport L1.  Juin 2026*

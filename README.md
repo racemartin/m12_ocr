@@ -422,6 +422,24 @@ ce projet.
 11. **Documentation L1 et L4** — rapport d'exploration des sources
     et schéma de données (modèle conceptuel + physique) en Mermaid.
 
+
+
+| | Source | REAL ✅ | FAKE ❌ |
+|--|--------|---------|---------|
+| <img src="docs/images/afp_factual_logo.png" height="20"> | AFP Factuel | `vrai` `vérifié` `confirmé` | `faux` `fake` `trompeur` `inexact` `manipulé` `hors contexte` |
+| <img src="docs/images/eu_vs_disinfo.png" height="20"> | EUvsDisinfo | — | `disinformation` `fake` `false` `misleading` *(tous FAKE)* |
+| <img src="docs/images/les_observateurs_logo.png" height="20"> | Les Observateurs | `vrai` `vérifié` | `faux` `trompeur` |
+| <img src="docs/images/hoaxbuster_logo.png" height="20"> | Hoaxbuster | `vrai` `vérifié` | `faux` `hoax` `trompeur` |
+| <img src="docs/images/newdata_io.png" height="20"> | NewsData.io | *(source fiable MBFC)* `bbc` `reuters` `afp` `lemonde` | *(source non fiable MBFC)* `rt` `sputnik` `breitbart` `infowars` |
+| <img src="docs/images/claim_buster_logo.png" height="20"> | ClaimBuster | — | — | *(score 0.0→1.0 — enrichissement uniquement)* |
+| <img src="docs/images/media_bias_fact_check.png" height="20"> | MBFC | `very high` `high` | `mixed` `low` `very low` `questionable` `conspiracy` `pseudoscience` `satire` |
+| <img src="docs/images/full_fact.png" height="20"> | FullFact UK | `true` `correct` `mostly true` | `false` `misleading` `incorrect` `unverified` `missing context` |
+| <img src="docs/images/correctiv_logo.png" height="20"> | Correctiv DE | `richtig` `wahr` `stimmt` | `falsch` `irreführend` `fake` |
+| <img src="docs/images/maldita_es.png" height="20"> | Maldita ES | `verdadero` `verdad` | `falso` `engañoso` `bulo` `satira` |
+| <img src="docs/images/politi_fact_logo.png" height="20"> | PolitiFact | `true` `mostly true` | `half-true` `mostly false` `false` `pants on fire` |
+| <img src="docs/images/les_surligneurs_logo.png" height="20"> | Les Surligneurs | `exact` `vrai` | `inexact` `faux` `trompeur` `exagéré` |
+| <img src="docs/images/logically_facts_logo.png" height="20"> | Logically | `true` `verified` | `false` `misleading` `unverified` `partly false` |
+| <img src="docs/images/le_monde_fr_logo.png" height="20"> | Decodex | `vrai` `vérifié` | `faux` `trompeur` `inexact` |
 ---
 
 ## Problèmes rencontrés et solutions
@@ -468,6 +486,42 @@ pas de pont réseau automatique.
 **Solution** `netsh interface portproxy` + règle de pare-feu Windows
 pour rediriger le port 8080 vers l'IP WSL2. Non bloquant pour l'usage
 du projet — `localhost:8080` suffit en développement local.
+
+
+---
+
+| | Source | Total | REAL | FAKE |
+|--|--------|-------|------|------|
+| <img src="docs/images/afp_factual_logo.png" height="20"> | AFP Factuel | 0 | — | — |
+| <img src="docs/images/eu_vs_disinfo.png" height="20"> | EUvsDisinfo | 0 | — | — |
+| <img src="docs/images/hoaxbuster_logo.png" height="20"> | Hoaxbuster | 0 | — | — |
+| <img src="docs/images/newdata_io.png" height="20"> | NewsData.io politique | **9** | **2** | **7** |
+| <img src="docs/images/newdata_io.png" height="20"> | NewsData.io santé | 0 | — | — |
+| <img src="docs/images/full_fact.png" height="20"> | FullFact UK | 0 | — | — |
+| <img src="docs/images/correctiv_logo.png" height="20"> | Correctiv DE | 0 | — | — |
+| <img src="docs/images/maldita_es.png" height="20"> | Maldita ES | 0 | — | — |
+| <img src="docs/images/politi_fact_logo.png" height="20"> | PolitiFact | 0 | — | — |
+| <img src="docs/images/logically_facts_logo.png" height="20"> | Logically | 0 | — | — |
+| <img src="docs/images/le_monde_fr_logo.png" height="20"> | Decodex | 0 | — | — |
+| **TOTAL** | | **9** | **2** | **7** |
+
+---
+
+### Diagnóstico de los 0 resultados
+
+Hay tres causas distintas :
+
+| Fuente | Causa | Fix |
+|--------|-------|-----|
+| AFP (403) | Bloquea User-Agent automático | Cambiar headers |
+| EUvsDisinfo / Hoaxbuster | Timeout — sitios lentos | Aumentar `TIMEOUT_REQUÊTE` a 30s |
+| FullFact / Correctiv / Maldita | **Sélecteurs CSS obsolètes** — el site cambió su HTML | Reinspeccionar DOM con DevTools |
+| PolitiFact | **Sélecteurs CSS obsolètes** — Scrapy no encontró `article.m-statement` | Reinspeccionar DOM |
+| Logically | Hors ligne | Cambiar source Selenium |
+| Decodex | Timeout JS — `article.article` no apareció en 20s | Aumentar `TIMEOUT_DRIVER` |
+| NewsData.io santé | 0 resultados en la query — término demasiado específico | Cambiar query |
+
+¿Empezamos por corregir los sélecteurs CSS de BS4 y Scrapy? 🚀
 
 ---
 

@@ -4,13 +4,13 @@
 #
 # Sources couvertes (originales — peu utilisées par les étudiants) :
 #   1. AFP Factuel          : fact-checker officiel AFP (fr)
-#      https://factuel.afp.com/feed
+#      https://factuel.afp.com/feed  (bloqué) → fallback Google News
 #   2. EUvsDisinfo          : base EU contre désinformation russe (en)
-#      https://euvsdisinfo.eu/feed
+#      https://euvsdisinfo.eu/feed/
 #   3. Observateur du Monde : vérification FR indépendante (fr)
 #      https://www.lesobservateurs.ch/feed/
 #   4. Hoaxbuster           : fact-checker FR grand public (fr)
-#      https://www.hoaxbuster.com/rss
+#      https://www.hoaxbuster.com/rss/
 #
 # Pourquoi ces sources sont originales :
 #   - AFP Factuel : labels explicites dans le titre (FAUX, VRAI, TROMPEUR)
@@ -20,7 +20,7 @@
 #
 # Port implémenté : ScraperPort
 # Outil           : Feedparser (parsing XML/RSS natif)
-# Test            : uv run scripts/test_feedparser.py
+# Test            : python3 scripts/test_feedparser.py
 # ==============================================================================
 
 # --- Bibliothèque standard ---------------------------------------------------
@@ -48,7 +48,7 @@ from src.tools.rafael.log_tool import LogTool
 
 # --- Configuration -----------------------------------------------------------
 DÉLAI_ENTRE_REQUÊTES = 1.0   # secondes — respect des serveurs RSS
-TIMEOUT_REQUÊTE      = 10    # secondes — abandon si source lente
+TIMEOUT_REQUÊTE      = 30    # secondes — augmenté (EUvsDisinfo/Hoaxbuster lents)
 TAILLE_MIN_IMAGE     = 100   # pixels — évite les pixels de tracking
 
 
@@ -124,6 +124,7 @@ class FeedparserAdapter(ScraperPort):
         """Nom lisible de la source pour les logs et KPIs."""
         noms = {
             "afp"          : "AFP Factuel RSS",
+            "afp_bluesky"  : "AFP Factuel Bluesky RSS",
             "euvsdisinfo"  : "EUvsDisinfo RSS",
             "hoaxbuster"   : "Hoaxbuster RSS",
             "observateur"  : "Observateur du Monde RSS",
@@ -319,8 +320,24 @@ class FeedparserAdapter(ScraperPort):
 
     # --------------------------------------------------------------------------
     def _extraire_titre(self, entrée: object) -> str:
-        """Extrait et nettoie le titre de l'entrée RSS."""
+        """Extrait et nettoie le titre de l'entrée RSS.
+
+        Pour les flux Bluesky (AFP Factuel) qui n'ont pas de champ title,
+        utilise la première ligne du summary comme titre.
+        """
         titre = getattr(entrée, "title", "").strip()
+
+        # -- Fallback : première ligne du summary (Bluesky RSS) ---------------
+        if not titre:
+            summary = getattr(entrée, "summary", "").strip()
+            if summary:
+                # Première ligne non vide — ignore les emojis seuls
+                for ligne in summary.splitlines():
+                    ligne = ligne.strip()
+                    if ligne and len(ligne) > 5:
+                        titre = self._nettoyer_html(ligne)
+                        break
+
         if not titre:
             raise TitreVideErreur(self._source)
         return self._nettoyer_html(titre)
@@ -382,6 +399,46 @@ class FeedparserAdapter(ScraperPort):
         )
         if correspondance:
             return correspondance.group(1)
+
+        # -- Fallback : récupérer og:image depuis l'URL de l'article ----------
+        # Pour EUvsDisinfo et AFP Bluesky (le lien AFP est dans le summary)
+        url_article = getattr(entrée, "link", "")
+
+        # AFP Bluesky : le lien AFP court est dans le summary (u.afp.com/...)
+        summary_txt = getattr(entrée, "summary", "")
+        lien_afp = re.search(r'https?://u\.afp\.com/\S+', summary_txt)
+        if lien_afp:
+            url_article = lien_afp.group(0)
+
+        if url_article:
+            try:
+                headers = {
+                    "User-Agent": (
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36"
+                    )
+                }
+                réponse = requests.get(
+                    url_article, timeout=10, headers=headers
+                )
+                if réponse.status_code == 200:
+                    og = re.search(
+                        r'<meta[^>]+property=["\']og:image["\'][^>]+'
+                        r'content=["\']([^"\']+)["\']',
+                        réponse.text,
+                    )
+                    if og:
+                        return og.group(1)
+                    # Ordre inversé (content avant property)
+                    og2 = re.search(
+                        r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+'
+                        r'property=["\']og:image["\']',
+                        réponse.text,
+                    )
+                    if og2:
+                        return og2.group(1)
+            except Exception:
+                pass  # si l'article est inaccessible, on rejette l'entrée
 
         return ""  # aucune image trouvée
 

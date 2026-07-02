@@ -79,13 +79,15 @@ CONFIG_SOURCES: Dict[str, Dict] = {
     "fullfact": {
         "url_base"           : "https://fullfact.org",
         "url_liste"          : "https://fullfact.org/latest/",
-        "sélecteur_articles" : "article.card",
-        "sélecteur_titre"    : "h2.card__title, h1.article-title",
-        "sélecteur_contenu"  : "div.article-content p",
-        "sélecteur_image"    : "img.article-image, img.card__image",
-        "sélecteur_label"    : "div.verdict, span.verdict-label",
+        "sélecteur_articles" : "div.card.feature-card",
+        "sélecteur_titre"    : "div.card-text h2",
+        "sélecteur_contenu"  : "div.card-text p",
+        "sélecteur_image"    : "div.card-image img",
+        "sélecteur_label"    : "",
+        "sélecteur_lien"     : "a.card-link",
         "langue"             : "en",
         "domaine"            : "fullfact.org",
+        "mode"               : "card",
         "labels"             : {
             "true"           : LabelVéracité.REAL,
             "correct"        : LabelVéracité.REAL,
@@ -102,11 +104,21 @@ CONFIG_SOURCES: Dict[str, Dict] = {
     "correctiv": {
         "url_base"           : "https://correctiv.org",
         "url_liste"          : "https://correctiv.org/faktencheck/",
-        "sélecteur_articles" : "article.teaser",
-        "sélecteur_titre"    : "h2.teaser__headline, h1.article__headline",
-        "sélecteur_contenu"  : "div.article__body p",
-        "sélecteur_image"    : "img.teaser__image, figure img",
-        "sélecteur_label"    : "span.verdict, div.fact-check-verdict",
+
+        # "sélecteur_articles" : "article, div.elementor-post",
+        # "sélecteur_titre"    : "h1.entry-title, h1.elementor-heading-title, h2.entry-title",
+        # "sélecteur_contenu"  : "div.entry-content p, div.elementor-widget-text-editor p",
+        # "sélecteur_image"    : "figure.wp-block-image img, div.elementor-widget-image img, img.wp-post-image",        
+        # "sélecteur_label"    : "div.fact-check-verdict, span.verdict, div.correctiv-verdict",
+        # "sélecteur_lien"     : "a.entry-title-link, h2 a, h3 a",
+
+        "sélecteur_articles" : "a.teaser__item",
+        "sélecteur_titre"    : "h1.entry-title, h1.post-title, h1",
+        "sélecteur_contenu"  : "div.entry-content p, div.post-content p",
+        "sélecteur_image"    : "img.wp-post-image, figure.wp-block-image img",        
+        "sélecteur_label"    : "div.fact-check-verdict img, .verdict",
+        "sélecteur_lien"     : "a.teaser__item", 
+
         "langue"             : "de",
         "domaine"            : "correctiv.org",
         "labels"             : {
@@ -123,20 +135,23 @@ CONFIG_SOURCES: Dict[str, Dict] = {
     "maldita": {
         "url_base"           : "https://maldita.es",
         "url_liste"          : "https://maldita.es/malditobulo/",
-        "sélecteur_articles" : "article.post-card",
-        "sélecteur_titre"    : "h2.post-card__title, h1.entry-title",
-        "sélecteur_contenu"  : "div.entry-content p",
-        "sélecteur_image"    : "img.post-card__image, img.wp-post-image",
-        "sélecteur_label"    : "span.bulo-label, div.verdict-tag",
+        "sélecteur_articles" : "a[href*='/malditobulo/']",
+        "sélecteur_titre"    : "div#headline h1, h1",
+        "sélecteur_contenu"  : "div#keys div, div#article-content div",
+        "sélecteur_image"    : "div#featuredImage img",
+        "sélecteur_label"    : "div#headline span.uppercase, div.flex.items-center span.uppercase",
+        "sélecteur_lien"     : "self",
         "langue"             : "es",
         "domaine"            : "maldita.es",
         "labels"             : {
             "falso"          : LabelVéracité.FAKE,
             "engañoso"       : LabelVéracité.FAKE,
             "bulo"           : LabelVéracité.FAKE,
-            "satira"         : LabelVéracité.FAKE,
+            "alerta"         : LabelVéracité.FAKE,
+            "contexto"       : LabelVéracité.FAKE,
             "verdadero"      : LabelVéracité.REAL,
             "verdad"         : LabelVéracité.REAL,
+            "verdadero/a"    : LabelVéracité.REAL,
         },
     },
 }
@@ -257,6 +272,95 @@ class Bs4Adapter(ScraperPort):
             return []
 
         # ----------------------------------------------------------------------
+        # MODE CARD (FullFact) — extraction directe depuis les cards
+        # sans suivre les liens vers les articles individuels
+        # ----------------------------------------------------------------------
+        if self._config.get("mode") == "card":
+            cards = soupe.select(self._config["sélecteur_articles"])
+            self._log.PARAMETER_VALUE("articles trouvés", len(cards))
+
+            for card in cards[:NB_ARTICLES_MAX]:
+                try:
+                    time.sleep(DÉLAI_ENTRE_REQUÊTES)
+
+                    # -- Titre ------------------------------------------------
+                    el_titre = card.select_one(
+                        self._config["sélecteur_titre"]
+                    )
+                    titre = el_titre.get_text(strip=True) if el_titre else ""
+
+                    # -- Contenu ----------------------------------------------
+                    els_contenu = card.select(
+                        self._config["sélecteur_contenu"]
+                    )
+                    contenu = " ".join(
+                        e.get_text(strip=True) for e in els_contenu
+                    )
+
+                    # -- Image ------------------------------------------------
+                    el_img    = card.select_one(
+                        self._config["sélecteur_image"]
+                    )
+                    image_url = ""
+                    if el_img:
+                        src = (
+                            el_img.get("src")
+                            or el_img.get("data-src", "")
+                        )
+                        if src and not src.startswith("data:"):
+                            image_url = urljoin(
+                                self._config["url_base"], src
+                            )
+
+                    # -- URL source (metadata) --------------------------------
+                    el_lien   = card.select_one(
+                        self._config["sélecteur_lien"]
+                    )
+                    url_source = ""
+                    if el_lien and el_lien.get("href"):
+                        url_source = urljoin(
+                            self._config["url_base"], el_lien["href"]
+                        )
+
+                    if not titre or not image_url:
+                        rejetées += 1
+                        continue
+
+                    pub = Publication(
+                        title         = titre,
+                        content       = contenu or titre,
+                        image_url     = image_url,
+                        source_domain = self._config["domaine"],
+                        declared_label= LabelVéracité.FAKE,
+                        lang          = self._config["langue"],
+                        metadata      = {"url_source": url_source},
+                    )
+                    if pub.est_valide():
+                        publications.append(pub)
+                        self._log.LEVEL_7_INFO(
+                            "Bs4Adapter",
+                            f"[{pub.declared_label.value}] {pub.title[:60]}",
+                        )
+                    else:
+                        rejetées += 1
+
+                except Exception as erreur:
+                    rejetées += 1
+                    self._log.LEVEL_5_WARNING(
+                        "Bs4Adapter", f"Card ignorée : {erreur}"
+                    )
+
+            self._log.PARAMETER_VALUE(
+                "publications valides", len(publications)
+            )
+            self._log.PARAMETER_VALUE("entrées rejetées....", rejetées)
+            self._log.FINISH_ACTION(
+                "Bs4Adapter", "extraire_données",
+                f"{len(publications)} publications extraites"
+            )
+            return publications
+
+        # ----------------------------------------------------------------------
         # Extraction des URLs d'articles
         # ----------------------------------------------------------------------
         urls_articles = self._extraire_urls_articles(soupe, source_url)
@@ -311,17 +415,30 @@ class Bs4Adapter(ScraperPort):
         soupe      : BeautifulSoup,
         url_base   : str,
     ) -> List[str]:
-        """Extrait les URLs des articles depuis la page liste."""
-        urls       = []
-        sélecteur  = self._config["sélecteur_articles"]
-        articles   = soupe.select(sélecteur)
+        """Extrait les URLs des articles depuis la page liste.
 
-        for article in articles:
-            lien = article.find("a", href=True)
-            if lien:
+        Gère deux cas :
+        - sélecteur pointe sur un conteneur (article, div) → cherche le lien enfant
+        - sélecteur pointe directement sur un lien (a[href*=...]) → utilise href
+        """
+        urls      = []
+        sélecteur = self._config["sélecteur_articles"]
+        éléments  = soupe.select(sélecteur)
+
+        for élément in éléments:
+            # -- Cas 1 : l'élément EST un lien --------------------------------
+            if élément.name == "a" and élément.get("href"):
+                url = urljoin(self._config["url_base"], élément["href"])
+            # -- Cas 2 : l'élément CONTIENT un lien ---------------------------
+            else:
+                lien = élément.find("a", href=True)
+                if not lien:
+                    continue
                 url = urljoin(self._config["url_base"], lien["href"])
-                if url not in urls:
-                    urls.append(url)
+
+            # -- Déduplication et filtre domaine -------------------------------
+            if url not in urls and self._config["url_base"] in url:
+                urls.append(url)
         return urls
 
     # --------------------------------------------------------------------------
@@ -380,12 +497,29 @@ class Bs4Adapter(ScraperPort):
 
     # --------------------------------------------------------------------------
     def _extraire_contenu(self, soupe: BeautifulSoup) -> str:
-        """Extrait et concatène les paragraphes de l'article."""
+        """Extrait et concatène le texte de l'article.
+
+        Gère deux cas :
+        - Contenu en <p> (FullFact, Correctiv)
+        - Contenu en <div> imbriqués (Maldita)
+        """
         éléments = soupe.select(self._config["sélecteur_contenu"])
-        texte    = " ".join(
-            élément.get_text(strip=True) for élément in éléments
-        )
-        return re.sub(r"\s+", " ", texte).strip()
+        if éléments:
+            texte = " ".join(
+                élément.get_text(separator=" ", strip=True)
+                for élément in éléments
+                if élément.get_text(strip=True)
+            )
+            return re.sub(r"\s+", " ", texte).strip()
+
+        # -- Fallback : tout le texte de l'article ----------------------------
+        article = soupe.select_one("article, main, div#content")
+        if article:
+            return re.sub(
+                r"\s+", " ", article.get_text(separator=" ", strip=True)
+            ).strip()[:2000]
+
+        return ""
 
     # --------------------------------------------------------------------------
     def _extraire_image(
@@ -393,15 +527,32 @@ class Bs4Adapter(ScraperPort):
         soupe    : BeautifulSoup,
         url_page : str,
     ) -> str:
-        """Extrait l'URL de l'image principale de l'article."""
+        """
+        Extrait l'URL de l'image principale de l'article.
+
+        Ordre de priorité :
+        1. Sélecteurs CSS configurés (src, data-src, data-lazy-src)
+        2. Balise meta og:image (fallback universel — présente sur 95% des sites)
+        """
+        # -- Tentative sélecteurs CSS configurés ------------------------------
         for sélecteur in self._config["sélecteur_image"].split(", "):
             élément = soupe.select_one(sélecteur.strip())
             if élément:
-                # Attributs possibles : src, data-src, data-lazy-src
-                for attr in ("src", "data-src", "data-lazy-src"):
+                for attr in ("src", "data-src", "data-lazy-src", "data-src-set"):
                     url = élément.get(attr, "")
-                    if url:
+                    if url and not url.startswith("data:"):
                         return urljoin(self._config["url_base"], url)
+
+        # -- Fallback : meta og:image (présente sur presque tous les articles) -
+        og_image = soupe.select_one('meta[property="og:image"]')
+        if og_image and og_image.get("content"):
+            return og_image["content"]
+
+        # -- Fallback : meta twitter:image --------------------------------
+        tw_image = soupe.select_one('meta[name="twitter:image"]')
+        if tw_image and tw_image.get("content"):
+            return tw_image["content"]
+
         return ""
 
     # --------------------------------------------------------------------------

@@ -54,7 +54,7 @@ from src.tools.rafael.log_tool import LogTool
 
 # --- Configuration -----------------------------------------------------------
 DÉLAI_CHARGEMENT     = 3.0   # secondes — attente rendu JavaScript
-TIMEOUT_DRIVER       = 20    # secondes — attente élément DOM
+TIMEOUT_DRIVER       = 30    # secondes — augmenté (Decodex chargement lent)
 TIMEOUT_REQUÊTE      = 15    # secondes — vérification disponibilité
 NB_ARTICLES_MAX      = 15    # articles max (Selenium est lent)
 DÉLAI_ENTRE_ARTICLES = 2.0   # secondes — respect du serveur
@@ -66,45 +66,49 @@ DÉLAI_ENTRE_ARTICLES = 2.0   # secondes — respect du serveur
 CONFIG_SOURCES = {
 
     # --------------------------------------------------------------------------
-    "logically": {
-        "url_liste"          : "https://www.logically.ai/factchecks",
-        "attente_élément"    : "div.fact-check-card",
-        "sélecteur_articles" : "div.fact-check-card",
+    # Africa Check — fact-checker africain certifié IFCN (remplace Logically hors ligne)
+    # Site React — rendu JS obligatoire
+    "africacheck": {
+        "url_liste"          : "https://africacheck.org/fact-checks",
+        "attente_élément"    : "article.fact-check, div.view-content article",
+        "sélecteur_articles" : "article.fact-check, div.views-row",
         "sélecteur_lien"     : "a",
-        "sélecteur_titre"    : "h1.article-title, h1.fc-title",
-        "sélecteur_contenu"  : "div.article-body p, div.fc-body p",
-        "sélecteur_image"    : "img.article-image, img.fc-image",
-        "sélecteur_label"    : "span.verdict-label, div.verdict-badge",
+        "sélecteur_titre"    : "h1.page-title, h1.fact-check-title",
+        "sélecteur_contenu"  : "div.field--body p, div.fact-check-body p",
+        "sélecteur_image"    : "img.fact-check-image, div.field--image img",
+        "sélecteur_label"    : "div.verdict-label, span.verdict, div.rating-label",
         "langue"             : "en",
-        "domaine"            : "logically.ai",
+        "domaine"            : "africacheck.org",
         "labels"             : {
-            "true"       : LabelVéracité.REAL,
-            "verified"   : LabelVéracité.REAL,
-            "false"      : LabelVéracité.FAKE,
-            "misleading" : LabelVéracité.FAKE,
-            "unverified" : LabelVéracité.FAKE,
-            "partly false": LabelVéracité.FAKE,
+            "correct"        : LabelVéracité.REAL,
+            "true"           : LabelVéracité.REAL,
+            "false"          : LabelVéracité.FAKE,
+            "incorrect"      : LabelVéracité.FAKE,
+            "misleading"     : LabelVéracité.FAKE,
+            "unverified"     : LabelVéracité.FAKE,
+            "exaggerated"    : LabelVéracité.FAKE,
         },
     },
 
     # --------------------------------------------------------------------------
+    # Decodex Le Monde — vérification française — timeout augmenté à 30s
     "decodex": {
         "url_liste"          : "https://www.lemonde.fr/verification/",
-        "attente_élément"    : "article.article",
-        "sélecteur_articles" : "article.article",
-        "sélecteur_lien"     : "a.article__title-link",
-        "sélecteur_titre"    : "h1.article__title",
-        "sélecteur_contenu"  : "section.article__content p",
-        "sélecteur_image"    : "figure.article__media img",
-        "sélecteur_label"    : "span.article__label, div.verification-tag",
+        "attente_élément"    : "div.article, article, div.river__item",
+        "sélecteur_articles" : "div.river__item, article.article, div.article",
+        "sélecteur_lien"     : "a.river__item-link, a.article__title-link, a",
+        "sélecteur_titre"    : "h1.article__title, h1",
+        "sélecteur_contenu"  : "section.article__content p, div.article__body p",
+        "sélecteur_image"    : "figure.article__media img, img.article__image",
+        "sélecteur_label"    : "span.article__label, div.verification-tag, span.tag",
         "langue"             : "fr",
         "domaine"            : "lemonde.fr",
         "labels"             : {
-            "faux"       : LabelVéracité.FAKE,
-            "trompeur"   : LabelVéracité.FAKE,
-            "inexact"    : LabelVéracité.FAKE,
-            "vrai"       : LabelVéracité.REAL,
-            "vérifié"    : LabelVéracité.REAL,
+            "faux"           : LabelVéracité.FAKE,
+            "trompeur"       : LabelVéracité.FAKE,
+            "inexact"        : LabelVéracité.FAKE,
+            "vrai"           : LabelVéracité.REAL,
+            "vérifié"        : LabelVéracité.REAL,
         },
     },
 }
@@ -161,8 +165,8 @@ class SeleniumAdapter(ScraperPort):
     def nom_source(self) -> str:
         """Nom lisible de la source."""
         noms = {
-            "logically": "Logically Facts (Selenium)",
-            "decodex"  : "Decodex Le Monde (Selenium)",
+            "africacheck": "Africa Check (Selenium)",
+            "decodex"    : "Decodex Le Monde (Selenium)",
         }
         return noms.get(self._source, f"Selenium {self._source}")
 

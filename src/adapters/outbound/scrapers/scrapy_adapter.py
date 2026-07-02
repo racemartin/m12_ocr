@@ -82,97 +82,95 @@ class PolitiFactSpider(scrapy.Spider):
     """
     Spider Scrapy pour PolitiFact.com.
 
-    Crawle la liste des fact-checks avec pagination
-    et extrait titre, image, label et contenu pour chaque article.
+    Utilise l'API JSON non-officielle de PolitiFact plutôt que le parsing HTML
+    — plus fiable car indépendant des changements de structure du site.
+
+    URL API : https://www.politifact.com/factchecks/list/?format=json&n=30
     """
 
     name             = "politifact_spider"
     allowed_domains  = ["politifact.com"]
-    start_urls       = ["https://www.politifact.com/factchecks/"]
     custom_settings  = {
         "DOWNLOAD_DELAY"          : DÉLAI_ENTRE_REQUÊTES,
-        "ROBOTSTXT_OBEY"          : True,   # respect obligatoire
+        "ROBOTSTXT_OBEY"          : True,
         "USER_AGENT"              : "CheckItAI/1.0 (academic research)",
-        "LOG_LEVEL"               : "WARNING",  # silencieux en prod
-        "FEEDS"                   : {},     # désactivé — résultat en mémoire
-        "AUTOTHROTTLE_ENABLED"    : True,   # adaptation automatique vitesse
+        "LOG_LEVEL"               : "WARNING",
+        "FEEDS"                   : {},
+        "AUTOTHROTTLE_ENABLED"    : True,
         "AUTOTHROTTLE_TARGET_CONCURRENCY": 1.0,
     }
 
     # --------------------------------------------------------------------------
     def __init__(self, résultats: list, *args, **kwargs) -> None:
-        """
-        Paramètres
-        ----------
-        résultats : list
-            Liste partagée où le spider ajoute ses résultats.
-        """
         super().__init__(*args, **kwargs)
-        self._résultats = résultats   # liste partagée avec ScrapyAdapter
+        self._résultats = résultats
 
     # --------------------------------------------------------------------------
-    def parse(self, response):
-        """Parse la page liste des fact-checks."""
-        articles = response.css("article.m-statement")
+    def start_requests(self):
+        """Démarre le crawl depuis la page liste HTML — l'API JSON n'existe plus."""
+        yield scrapy.Request(
+            "https://www.politifact.com/factchecks/",
+            callback    = self.parse_html,
+            headers     = {"User-Agent": "CheckItAI/1.0 (academic research)"},
+        )
 
-        for article in articles[:NB_ARTICLES_MAX]:
-            # -- URL de l'article individuel ----------------------------------
-            lien = article.css("a.m-statement__name::attr(href)").get("")
-            if lien:
-                yield response.follow(lien, self.parse_article)
+    # --------------------------------------------------------------------------
+    def parse_html(self, response):
+        """Parse la page liste HTML de PolitiFact."""
+        items = response.css("li.o-listicle__item")
+        for item in items[:NB_ARTICLES_MAX]:
+            # -- Titre (citation dans le lien) --------------------------------
+            titre = item.css(
+                "div.m-statement__quote a::text"
+            ).get("").strip()
+
+            # -- URL article --------------------------------------------------
+            lien = item.css(
+                "div.m-statement__quote a::attr(href)"
+            ).get("")
+            url_art = (
+                "https://www.politifact.com" + lien if lien else ""
+            )
+
+            # -- Label via alt de l'image truth-o-meter ----------------------
+            label_texte = item.css(
+                "div.m-statement__meter img::attr(alt)"
+            ).get("").lower().strip()
+
+            # -- Image du speaker (seule image disponible dans la liste) ------
+            image_url = item.css(
+                "div.m-statement__image img.c-image__original::attr(src), "
+                "div.m-statement__image img.c-image__thumb::attr(src)"
+            ).get("")
+
+            # -- Mapping label ------------------------------------------------
+            label = LabelVéracité.FAKE
+            for mot_clé, val in LABELS_POLITIFACT.items():
+                if mot_clé in label_texte:
+                    label = val
+                    break
+
+            if titre and image_url:
+                self._résultats.append({
+                    "title"         : titre,
+                    "content"       : titre,
+                    "image_url"     : image_url,
+                    "source_domain" : "politifact.com",
+                    "declared_label": label.value,
+                    "lang"          : "en",
+                    "metadata"      : {
+                        "url_source": url_art,
+                        "label_brut": label_texte,
+                    },
+                })
 
         # -- Pagination -------------------------------------------------------
-        page_suivante = response.css("a.link.link--has-icon::attr(href)").get()
+        page_suivante = response.css(
+            "a.o-listicle__more::attr(href), "
+            "a[rel='next']::attr(href)"
+        ).get()
         if page_suivante and len(self._résultats) < NB_ARTICLES_MAX:
-            yield response.follow(page_suivante, self.parse)
-
-    # --------------------------------------------------------------------------
-    def parse_article(self, response):
-        """Parse un article fact-check individuel."""
-        # -- Titre ------------------------------------------------------------
-        titre = response.css(
-            "h1.article__title::text, h2.c-title::text"
-        ).get("")
-
-        # -- Label de véracité ------------------------------------------------
-        label_texte = response.css(
-            "div.m-statement__meter img::attr(alt), "
-            "span.c-image__original::attr(alt)"
-        ).get("").lower()
-
-        # -- Image principale -------------------------------------------------
-        image_url = response.css(
-            "div.article__image img::attr(src), "
-            "figure.m-statement__image img::attr(src)"
-        ).get("")
-
-        # -- Contenu textuel --------------------------------------------------
-        paragraphes = response.css(
-            "article.article__text p::text"
-        ).getall()
-        contenu = " ".join(paragraphes).strip()
-
-        # -- Mapping label ----------------------------------------------------
-        label = LabelVéracité.FAKE  # défaut prudent
-        for mot_clé, val in LABELS_POLITIFACT.items():
-            if mot_clé in label_texte:
-                label = val
-                break
-
-        # -- Ajout au résultat si valide --------------------------------------
-        if titre and image_url:
-            self._résultats.append({
-                "title"         : titre.strip(),
-                "content"       : contenu,
-                "image_url"     : image_url,
-                "source_domain" : "politifact.com",
-                "declared_label": label.value,
-                "lang"          : "en",
-                "metadata"      : {
-                    "url_source"  : response.url,
-                    "label_brut"  : label_texte,
-                },
-            })
+            yield response.follow(page_suivante, self.parse_html)
 
 
 # ##############################################################################
@@ -258,9 +256,8 @@ class ScrapyAdapter(ScraperPort):
             processus.crawl(
                 PolitiFactSpider,
                 résultats=résultats_bruts,
-                start_urls=[source_url],
             )
-            processus.start()  # bloquant jusqu'à la fin du crawl
+            processus.start()
 
         except Exception as erreur:
             self._log.LEVEL_4_ERROR(
