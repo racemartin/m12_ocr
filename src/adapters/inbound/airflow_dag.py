@@ -41,7 +41,10 @@ from   airflow                   import DAG
 from   airflow.models            import Variable
 from   airflow.operators.python  import PythonOperator
 
-# --- Couches du projet : le port et son implémentation --------------------------
+# --- Couches du projet : le port, son implémentation et la persistance ----------
+from   src.adapters.outbound.persistence.postgresql_adapter import (
+    PostgresqlAdapter,                     # Adaptateur de persistance
+)
 from   src.application.pipeline_service     import PipelineService
 from   src.ports.inbound.orchestrateur_port import OrchestreurPort
 
@@ -55,23 +58,24 @@ def _construire_orchestrateur() -> OrchestreurPort:
     Variables Airflow.
 
     C'est ICI (et seulement ici) que le monde Airflow rencontre la
-    couche application : credentials et drapeaux sont injectés via
-    le constructeur — le service n'importe jamais airflow.
+    couche application : le PostgresqlAdapter est construit avec les
+    credentials des Variables puis INJECTÉ — ni le service ni le
+    domaine n'importent jamais airflow ou psycopg2.
     """
-    config_pg = {
+    persistance = PostgresqlAdapter(config={
         "host"     : Variable.get("checkit_pg_host", default_var="localhost"),
         "port"     : Variable.get("checkit_pg_port", default_var="5432"),
         "dbname"   : Variable.get("checkit_pg_db",   default_var="checkit"),
         "user"     : Variable.get("checkit_pg_user", default_var="checkit"),
         "password" : Variable.get("checkit_pg_password"),
-    }
+    })
     vérifier = Variable.get(
         "checkit_verifier_images", default_var="False"
     ).lower() == "true"
 
     return PipelineService(
         racine_projet   = RACINE_PROJET,
-        config_pg       = config_pg,
+        persistence     = persistance,
         vérifier_images = vérifier,
     )
 

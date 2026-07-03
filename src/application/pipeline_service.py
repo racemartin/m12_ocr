@@ -11,27 +11,30 @@
 #     techniques (credentials PostgreSQL, drapeaux) sont INJECTÉS par
 #     l'adaptateur via le constructeur.
 #
-# Dette technique documentée :
-#   - exécuter_chargement() utilise psycopg2 en direct ; il migrera vers
-#     PersistencePort → PostgresqlAdapter au branchement de la couche
-#     persistence (le contrat du port, lui, ne changera pas).
+# Injection de dépendances (principe hexagonal) :
+#   - La couche application n'importe JAMAIS airflow ni psycopg2 : la
+#     persistance arrive par le contrat PersistencePort, et les
+#     paramètres techniques sont INJECTÉS par le composition root
+#     (.env en CLI, Variables Airflow dans le DAG).
 # ==============================================================================
 
 # --- Bibliothèque standard : fichiers et horodatage ----------------------------
 import json                                # Sérialisation des lots JSON
+import os                                  # Lecture des variables du .env
 import sys                                 # Bootstrap du chemin projet (main)
 
 from   datetime import datetime            # Horodatage des fichiers bruts
 from   pathlib  import Path                # Chemins portables
 from   typing   import Dict                # Annotations de types
 
-# --- Couches du projet : port implémenté, services et adaptateurs --------------
+# --- Couches du projet : ports implémentés/consommés et services ----------------
 from   src.adapters.outbound.scrapers.feedparser_adapter import (
     FeedparserAdapter,                     # Extraction RSS (7 sources)
 )
-from   src.application.transform_service   import TransformService
+from   src.application.transform_service    import TransformService
 from   src.ports.inbound.orchestrateur_port import OrchestreurPort
-from   src.tools.rafael.log_tool            import LogTool
+from   src.ports.outbound.persistence_port  import PersistencePort
+from   src.tools.rafael.log_tool             import LogTool
 
 
 # ==============================================================================
@@ -62,19 +65,19 @@ class PipelineService(OrchestreurPort):
     racine_projet : Path
         Racine du projet (les dossiers data/raw et data/processed
         en sont dérivés).
+    persistence : PersistencePort
+        Adaptateur de persistance INJECTÉ (PostgresqlAdapter en
+        production, adaptateur mémoire dans les tests). La couche
+        application ne connaît que le contrat, jamais la technologie.
     sources_rss : dict
         Identifiant de source → URL du flux (défaut : les 7 sources
         opérationnelles de l'Étape 2).
-    config_pg : dict
-        Connexion PostgreSQL : host, port, dbname, user, password.
-        INJECTÉE par l'adaptateur (Variables Airflow, .env, CLI...) —
-        jamais lue ici, jamais en dur.
     vérifier_images : bool
         Transmis au TransformService (validation HTTP des images).
 
     Utilisation
     -----------
-    service = PipelineService(racine, config_pg={...})
+    service = PipelineService(racine, persistence=PostgresqlAdapter(...))
     chemin  = service.exécuter_extraction()
     service.exécuter_validation(chemin)
     ...
@@ -84,15 +87,15 @@ class PipelineService(OrchestreurPort):
     def __init__(
         self,
         racine_projet   : Path,
+        persistence     : PersistencePort,
         sources_rss     : Dict[str, str] = None,
-        config_pg       : Dict[str, str] = None,
         vérifier_images : bool           = False,
     ) -> None:
         self._racine          = Path(racine_projet)   # Racine du projet
         self._dossier_brut    = self._racine / "data" / "raw"
         self._dossier_propre  = self._racine / "data" / "processed"
+        self._persistence     = persistence           # Port de persistance
         self._sources         = sources_rss or SOURCES_RSS_DÉFAUT
-        self._config_pg       = config_pg or {}       # Injecté par l'adaptateur
         self._vérifier_images = vérifier_images       # Validation HTTP images
         self._log             = LogTool(origin="pipeline")  # Logger RFC 5424
 
@@ -190,74 +193,32 @@ class PipelineService(OrchestreurPort):
         return stats["sorties"]["json"]      # Chemin du dataset propre
 
     # ##########################################################################
-    # OPÉRATION 4 — CHARGEMENT (PostgreSQL)
+    # OPÉRATION 4 — CHARGEMENT (via PersistencePort)
     # ##########################################################################
     def exécuter_chargement(self, chemin_propre: str) -> int:
         """
-        Charge les publications propres dans la table publications.
+        Charge les publications propres via le port de persistance.
 
-        Sécurité : connexion injectée (jamais en dur), INSERT paramétré
-        (aucune injection SQL), ON CONFLICT (id) DO NOTHING = idempotence
-        (rejouer le pipeline ne crée jamais de doublons).
-
-        NOTE dette technique : psycopg2 direct — migrera vers
-        PersistencePort → PostgresqlAdapter sans changer ce contrat.
+        La couche application ignore la technologie de stockage :
+        elle compte simplement les insertions confirmées par le
+        contrat (sauvegarder → True si insérée, False si doublon).
+        L'idempotence et la sécurité SQL vivent dans l'adaptateur.
         """
-        import psycopg2                      # Import local : dépendance
-                                             # limitée à cette opération
-
         lot = json.loads(Path(chemin_propre).read_text(encoding="utf-8"))
         self._log.START_ACTION(
             "PipelineService", "exécuter_chargement",
             f"{len(lot)} publications"
         )
 
-        connexion = psycopg2.connect(**self._config_pg)
-        curseur   = connexion.cursor()
-
-        # -- Création de la table si absente (schéma physique L4) ---------------
-        curseur.execute("""
-            CREATE TABLE IF NOT EXISTS publications (
-                id             VARCHAR(64)   PRIMARY KEY,
-                title          TEXT          NOT NULL,
-                content        TEXT,
-                image_url      VARCHAR(2048) NOT NULL,
-                source_domain  VARCHAR(255)  NOT NULL,
-                declared_label VARCHAR(4)    NOT NULL
-                               CHECK (declared_label IN ('REAL', 'FAKE')),
-                lang           CHAR(2)       DEFAULT 'fr',
-                captured_at    TIMESTAMPTZ   DEFAULT NOW(),
-                metadata       JSONB
-            );
-        """)
-
-        # -- Insertion idempotente ------------------------------------------------
         insérées = 0
-        for pub in lot:
-            curseur.execute(
-                """
-                INSERT INTO publications
-                    (id, title, content, image_url, source_domain,
-                     declared_label, lang, captured_at, metadata)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO NOTHING;
-                """,
-                (
-                    pub["id"],            pub["title"],
-                    pub["content"],       pub["image_url"],
-                    pub["source_domain"], pub["declared_label"],
-                    pub["lang"],          pub["captured_at"],
-                    json.dumps(
-                        pub.get("metadata", {}), ensure_ascii=False
-                    ),
-                ),
-            )
-            insérées += curseur.rowcount     # 0 si doublon (conflit id)
+        try:
+            for publication in lot:
+                if self._persistence.sauvegarder(publication):
+                    insérées += 1
+        finally:
+            self._persistence.fermer()       # Libération garantie
 
-        connexion.commit()
-        curseur.close()
-        connexion.close()
-
+        self._log.PARAMETER_VALUE("doublons ignorés", len(lot) - insérées)
         self._log.FINISH_ACTION(
             "PipelineService", "exécuter_chargement", f"{insérées} insérées"
         )
@@ -295,23 +256,48 @@ class PipelineService(OrchestreurPort):
 
 
 # ==============================================================================
-# POINT D'ENTRÉE : exécution complète hors Airflow (démo et débogage)
+# POINT D'ENTRÉE : composition root CLI (démo et débogage hors Airflow)
 # ==============================================================================
+# C'est ICI que les pièces s'assemblent : chargement du .env, construction
+# de l'adaptateur de persistance, injection dans le service. Aucune
+# credential n'apparaît dans le code — tout vient du fichier .env
+# (CHECKIT_PG_HOST, CHECKIT_PG_PORT, CHECKIT_PG_DB, CHECKIT_PG_USER,
+#  CHECKIT_PG_PASSWORD, CHECKIT_VERIFIER_IMAGES).
+# Même mécanisme que la phase d'extraction : python-dotenv.
 if __name__ == "__main__":
-    # Bootstrap : ajoute la racine du projet au chemin des imports
+    # -- Bootstrap : racine du projet dans le chemin des imports ----------------
     RACINE = Path(__file__).resolve().parents[2]
     if str(RACINE) not in sys.path:
         sys.path.insert(0, str(RACINE))
 
+    from dotenv import load_dotenv           # Chargement du fichier .env
+
+    from src.adapters.outbound.persistence.postgresql_adapter import (
+        PostgresqlAdapter,
+    )
+
+    # -- Chargement du .env (les variables déjà exportées gardent priorité) -----
+    load_dotenv(RACINE / ".env")
+    if not os.environ.get("CHECKIT_PG_PASSWORD"):
+        sys.exit(
+            "ERREUR : CHECKIT_PG_PASSWORD absent du fichier .env — "
+            "voir .env.example"
+        )
+
+    persistance = PostgresqlAdapter(config={
+        "host"     : os.environ.get("CHECKIT_PG_HOST", "localhost"),
+        "port"     : os.environ.get("CHECKIT_PG_PORT", "5432"),
+        "dbname"   : os.environ.get("CHECKIT_PG_DB",   "checkit"),
+        "user"     : os.environ.get("CHECKIT_PG_USER", "checkit"),
+        "password" : os.environ["CHECKIT_PG_PASSWORD"],
+    })
+
     service = PipelineService(
-        racine_projet = RACINE,
-        config_pg     = {                    # Démo locale — en production,
-            "host"     : "localhost",        # ces valeurs sont injectées
-            "port"     : "5432",             # par l'adaptateur (Variables
-            "dbname"   : "checkit",          # Airflow, .env...)
-            "user"     : "checkit",
-            "password" : "checkit",
-        },
+        racine_projet   = RACINE,
+        persistence     = persistance,
+        vérifier_images = os.environ.get(
+            "CHECKIT_VERIFIER_IMAGES", "False"
+        ).lower() == "true",
     )
     chemin_brut   = service.exécuter_extraction()
     service.exécuter_validation(chemin_brut)
