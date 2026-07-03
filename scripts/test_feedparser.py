@@ -14,9 +14,13 @@ from src.tools.rafael.log_tool import LogTool
 
 # --- AFP Bluesky remplace factuel.afp.com/feed (bloqué 403) -----------------
 SOURCES_RSS = {
-    "afp_bluesky" : "https://bsky.app/profile/did:plc:4ks5wkubjfcbgxvphqkd3wxm/rss",
-    "euvsdisinfo" : "https://euvsdisinfo.eu/feed/",
-    "hoaxbuster"  : "https://www.hoaxbuster.com/rss/",
+    "afp_bluesky"  : "https://bsky.app/profile/did:plc:4ks5wkubjfcbgxvphqkd3wxm/rss",
+    "euvsdisinfo"  : "https://euvsdisinfo.eu/feed/",
+    "hoaxbuster"   : "https://www.hoaxbuster.com/rss/",
+    "elpais"       : "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada",
+    "politifact"   : "https://www.politifact.com/rss/factchecks/",
+    "decodeurs"    : "https://www.lemonde.fr/les-decodeurs/rss_full.xml",
+    "chequeado"    : "https://chequeado.com/feed/",
 }
 
 DOSSIER_SORTIE = Path(__file__).resolve().parent.parent / "data" / "raw"
