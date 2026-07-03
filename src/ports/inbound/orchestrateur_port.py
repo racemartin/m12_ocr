@@ -1,104 +1,83 @@
 # ==============================================================================
-# src/ports/inbound/orchestrateur_port.py — Contrat d'orchestration
+# src/ports/inbound/orchestrateur_port.py — Port inbound de l'orchestration
 #
-# Règle absolue : ZÉRO import externe dans ce fichier.
-# Ce port définit le contrat que le DAG Airflow doit respecter
-# pour déclencher le pipeline ETL CheckIt.AI.
+# Contrat que TOUT déclencheur technique (Airflow, cron, CLI, API...) doit
+# utiliser pour piloter le pipeline ETL. Le déclencheur ne connaît que ce
+# port — jamais les services ni les adaptateurs concrets.
 #
-# C'est le seul point d'entrée autorisé dans le domaine depuis
-# l'extérieur — le DAG appelle ce port, pas le domaine directement.
+# Règle absolue : ZÉRO import externe dans ce fichier (couche PORTS).
+# Implémentation de référence : src/application/pipeline_service.py
 # ==============================================================================
 
-# --- Bibliothèque standard uniquement ----------------------------------------
-from abc     import ABC, abstractmethod  # contrat abstrait non instanciable
-from typing  import Dict, Any            # annotations de types
+# --- Bibliothèque standard : classes abstraites --------------------------------
+from   abc import ABC, abstractmethod      # Contrat d'interface abstrait
 
 
-# ==============================================================================
+# ##############################################################################
 # PORT : OrchestreurPort
-# ==============================================================================
+# ##############################################################################
 class OrchestreurPort(ABC):
     """
-    Contrat abstrait pour l'orchestrateur du pipeline ETL.
+    Contrat d'orchestration du pipeline ETL CheckIt.AI.
 
-    Le DAG Airflow implémente ce port — il déclenche chaque étape
-    du pipeline en respectant la séquence définie par le domaine :
+    Les cinq opérations correspondent aux cinq tâches atomiques du flux :
     extraction → validation → transformation → chargement → notification.
 
-    Implémentations attendues
-    -------------------------
-    - AirflowDag : adaptateur inbound dans adapters/inbound/airflow_dag.py
+    Les échanges se font par CHEMINS de fichiers (str) et compteurs (int)
+    — jamais par structures volumineuses : le déclencheur (ex. Airflow)
+    peut ainsi les transmettre via son mécanisme natif (XCom).
     """
 
-    # --------------------------------------------------------------------------
+    # ##########################################################################
     @abstractmethod
-    def exécuter_extraction(self, **contexte: Any) -> Dict[str, Any]:
+    def exécuter_extraction(self) -> str:
         """
-        Déclenche l'étape d'extraction depuis toutes les sources.
-
-        Correspond à extract_task dans le DAG Airflow.
-
-        Paramètres
-        ----------
-        **contexte : Any
-            Contexte Airflow passé par XCom entre les tâches.
+        Extrait les publications de toutes les sources configurées.
 
         Retourne
         --------
-        Dict[str, Any]
-            Résultats : nombre d'entrées extraites, chemins fichiers,
-            temps d'exécution, erreurs rencontrées.
+        str : chemin du fichier JSON brut produit (data/raw/...).
         """
 
-    # --------------------------------------------------------------------------
+    # ##########################################################################
     @abstractmethod
-    def exécuter_validation(self, **contexte: Any) -> Dict[str, Any]:
+    def exécuter_validation(self, chemin_brut: str) -> int:
         """
-        Vérifie l'intégrité des données brutes extraites.
+        Contrôle l'intégrité du lot brut avant transformation.
 
-        Correspond à validate_raw_task dans le DAG Airflow.
-        Rejette les entrées sans paire texte-image complète.
+        Lève une exception si le lot est vide ou illisible (le
+        déclencheur décide alors : retry, alerte, arrêt).
 
         Retourne
         --------
-        Dict[str, Any]
-            Résultats : entrées valides, rejetées, taux d'intégrité.
+        int : nombre d'entrées du lot validé.
         """
 
-    # --------------------------------------------------------------------------
+    # ##########################################################################
     @abstractmethod
-    def exécuter_transformation(self, **contexte: Any) -> Dict[str, Any]:
+    def exécuter_transformation(self) -> str:
         """
-        Applique clean_text(), validate_image(), normalize_label().
-
-        Correspond à transform_task dans le DAG Airflow.
+        Applique le pipeline de transformation (Étape 3) au lot brut.
 
         Retourne
         --------
-        Dict[str, Any]
-            Résultats : entrées transformées, rejetées, statistiques.
+        str : chemin du fichier JSON propre (data/processed/...).
         """
 
-    # --------------------------------------------------------------------------
+    # ##########################################################################
     @abstractmethod
-    def exécuter_chargement(self, **contexte: Any) -> Dict[str, Any]:
+    def exécuter_chargement(self, chemin_propre: str) -> int:
         """
-        Persiste les données transformées en base de données.
-
-        Correspond à load_task dans le DAG Airflow.
+        Charge les publications propres dans la base de persistance.
 
         Retourne
         --------
-        Dict[str, Any]
-            Résultats : entrées sauvegardées, doublons ignorés.
+        int : nombre de publications réellement insérées (hors doublons).
         """
 
-    # --------------------------------------------------------------------------
+    # ##########################################################################
     @abstractmethod
-    def exécuter_notification(self, **contexte: Any) -> None:
+    def exécuter_notification(self, insérées: int) -> None:
         """
-        Envoie le rapport d'exécution du pipeline.
-
-        Correspond à notify_task dans le DAG Airflow.
-        Envoie email + log critique si seuil d'alerte atteint.
+        Publie le rapport final du run (logs, KPIs, alertes).
         """
