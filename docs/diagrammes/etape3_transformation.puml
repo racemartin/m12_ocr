@@ -1,0 +1,60 @@
+@startuml etape3_transformation
+' =============================================================================
+' Etape 3 - Pipeline de transformation (TransformService)
+' Diagramme d'activite : lecture -> traitement -> export
+' =============================================================================
+skinparam defaultFontName Helvetica
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #FFF8E7
+  BorderColor #806000
+  DiamondBackgroundColor #FFE9B0
+  DiamondBorderColor #806000
+}
+
+title Etape 3 - Pipeline de transformation\n(src/application/transform_service.py)
+
+start
+
+partition "ETAPE 1 - LECTURE" #D6EAF8 {
+  :Lister les fichiers data/raw/*.json;
+  :Charger chaque fichier (corrompu = journalise, ignore);
+  :Concatener toutes les entrees brutes;
+}
+
+partition "ETAPE 2 - TRAITEMENT (par entree)" #FDEDEC {
+  repeat
+    :nettoie_texte(title, content)\nbalises HTML, Unicode NFC, espaces;
+    if (titre, contenu, image_url presents ?) then (non)
+      :REJET : TitreVide, ContenuVide,\nImageUrlVideErreur;
+    else (oui)
+      :normalise_label(declared_label)\nvariantes fr/en/es/de vers REAL ou FAKE;
+      if (label reconnu ?) then (non)
+        :REJET : LabelInvalideErreur;
+      else (oui)
+        if (valide_image(url) OK ?\nHTTP 200, Content-Type, taille) then (non)
+          :REJET : ImageInaccessibleErreur;
+        else (oui)
+          :genere_id(titre, source) : SHA-256;
+          if (id deja vu ?) then (oui)
+            :REJET : doublon;
+          else (non)
+            :colonnes derivees :\ncaptured_at, nb_mots_contenu;
+            :publication PROPRE;
+          endif
+        endif
+      endif
+    endif
+  repeat while (entrees restantes ?)
+}
+
+partition "ETAPE 3 - EXPORT" #D5F5E3 {
+  :publications_propres.json (dataset complet);
+  :publications_propres.csv (vue tabulaire);
+  :stats_transformation.json\n(compteurs, taux integrite, motifs de rejet);
+}
+
+:RAPPORT console (REAL/FAKE, taux d'integrite);
+stop
+
+@enduml
