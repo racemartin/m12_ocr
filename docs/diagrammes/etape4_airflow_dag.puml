@@ -1,0 +1,60 @@
+@startuml etape4_airflow_dag
+' =============================================================================
+' Étape 4 — Orchestration Airflow (DAG checkit_etl)
+' Vue séquence : Airflow (adaptateur inbound) pilote les couches du projet
+' =============================================================================
+skinparam defaultFontName Helvetica
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #806000
+  LifeLineBorderColor #806000
+  ParticipantBackgroundColor #FFF8E7
+  ParticipantBorderColor #806000
+}
+
+title Étape 4 — DAG « checkit_etl » (@daily · retries=3 · timeout 30 min)\nAirflow = adaptateur INBOUND — aucune logique métier dans le DAG
+
+participant "Scheduler\nAirflow"           as SCHED
+participant "DAG checkit_etl\n(adapters/inbound)" as DAG
+participant "FeedparserAdapter\n(adapters/outbound)" as FEED
+participant "TransformService\n(application)"       as TRANS
+database    "data/raw · processed\n(fichiers JSON)"  as FS
+database    "PostgreSQL\ntable publications"        as PG
+
+SCHED -> DAG  : déclenche le run (@daily)
+
+group Tâche 1 — extraction
+  DAG  -> FEED : extraire_données(url) × 7 sources RSS
+  FEED --> DAG : List[Publication]
+  DAG  -> FS   : etl_extraction_<date>.json
+  note right of DAG : XCom = chemin du fichier\n(jamais les données)
+end
+
+group Tâche 2 — validation_brute
+  DAG -> FS  : lecture du lot brut
+  DAG -> DAG : lot non vide ?\npaires texte-image ?
+  note right of DAG : lot vide → échec →\nretry (×3) puis alerte
+end
+
+group Tâche 3 — transformation (Étape 3)
+  DAG   -> TRANS : exécuter()
+  TRANS -> FS    : lecture data/raw/*.json
+  TRANS -> TRANS : nettoie_texte · normalise_label\nvalide_image · dédoublonnage
+  TRANS -> FS    : publications_propres.json/.csv\n+ stats_transformation.json
+  TRANS --> DAG  : stats (chemins, compteurs)
+end
+
+group Tâche 4 — chargement
+  DAG -> PG : CREATE TABLE IF NOT EXISTS publications
+  DAG -> PG : INSERT ... ON CONFLICT (id) DO NOTHING
+  note right of PG : idempotence : rejouer le DAG\nne crée jamais de doublons\ncredentials via Variables Airflow
+end
+
+group Tâche 5 — notification
+  DAG -> FS  : lecture stats_transformation.json
+  DAG -> DAG : RAPPORT ETL dans les logs\n(REAL/FAKE · taux d'intégrité)
+end
+
+DAG --> SCHED : run SUCCESS (5/5 tâches vertes)
+
+@enduml
