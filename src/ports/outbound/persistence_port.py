@@ -62,5 +62,20 @@ class PersistencePort(ABC):
 
     # ##########################################################################
     @abstractmethod
+    def enregistrer_run(self, run: dict) -> None:
+        """
+        Historise un run d'extraction complet.
+
+        Alimente les tables extraction_runs (statistiques du run),
+        run_sources (liaison N-N run ↔ sources) et sources (mise à
+        jour de dernière_extraction et nb_publications).
+
+        Le dictionnaire run contient : run_id, started_at, finished_at,
+        nb_extraites, nb_valides, nb_rejetées, taux_intégrité,
+        sources_domains (liste des domaines impliqués).
+        """
+
+    # ##########################################################################
+    @abstractmethod
     def fermer(self) -> None:
         """Libère proprement les ressources (connexion, curseurs)."""

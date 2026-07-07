@@ -6,11 +6,6 @@
 # (DAG Airflow, cron, CLI) n'est qu'un adaptateur mince qui appelle les
 # cinq méthodes du contrat.
 #
-# Injection de configuration (principe hexagonal) :
-#   - La couche application n'importe JAMAIS airflow : les paramètres
-#     techniques (credentials PostgreSQL, drapeaux) sont INJECTÉS par
-#     l'adaptateur via le constructeur.
-#
 # Injection de dépendances (principe hexagonal) :
 #   - La couche application n'importe JAMAIS airflow ni psycopg2 : la
 #     persistance arrive par le contrat PersistencePort, et les
@@ -23,9 +18,16 @@ import json                                # Sérialisation des lots JSON
 import os                                  # Lecture des variables du .env
 import sys                                 # Bootstrap du chemin projet (main)
 
-from   datetime import datetime            # Horodatage des fichiers bruts
+from   datetime import datetime, timezone  # Horodatage et identifiant de run
 from   pathlib  import Path                # Chemins portables
 from   typing   import Dict                # Annotations de types
+
+# --- Racine du projet : indispensable AVANT les imports src.* ------------------
+# En exécution directe (python3 src/application/pipeline_service.py),
+# Python place src/application/ dans sys.path — pas la racine du projet.
+RACINE_PROJET = Path(__file__).resolve().parents[2]
+if str(RACINE_PROJET) not in sys.path:
+    sys.path.insert(0, str(RACINE_PROJET))
 
 # --- Couches du projet : ports implémentés/consommés et services ----------------
 from   src.adapters.outbound.scrapers.feedparser_adapter import (
@@ -98,6 +100,10 @@ class PipelineService(OrchestreurPort):
         self._sources         = sources_rss or SOURCES_RSS_DÉFAUT
         self._vérifier_images = vérifier_images       # Validation HTTP images
         self._log             = LogTool(origin="pipeline")  # Logger RFC 5424
+        self._run_id          = (                     # Identifiant unique du
+            "run_"                                    # run — sous Airflow, le
+            + datetime.now().strftime("%Y%m%d_%H%M%S")  # dag_run.run_id
+        )                                             # pourra l'écraser
 
     # ##########################################################################
     # OPÉRATION 1 — EXTRACTION
@@ -215,6 +221,27 @@ class PipelineService(OrchestreurPort):
             for publication in lot:
                 if self._persistence.sauvegarder(publication):
                     insérées += 1
+
+            # -- Historisation du run (extraction_runs / sources / liaison) -----
+            # Faite ICI (même instance que la boucle) : sous Airflow chaque
+            # tâche construit son propre service — les compteurs viennent
+            # donc du fichier de stats, pas d'un état en mémoire.
+            stats = json.loads(
+                (self._dossier_propre / "stats_transformation.json")
+                .read_text(encoding="utf-8")
+            )
+            self._persistence.enregistrer_run({
+                "run_id"          : self._run_id,
+                "started_at"      : stats["exécuté_le"],
+                "finished_at"     : datetime.now(timezone.utc).isoformat(),
+                "nb_extraites"    : stats["entrées_brutes"],
+                "nb_valides"      : stats["valides"],
+                "nb_rejetées"     : stats["rejetées"],
+                "taux_intégrité"  : stats["taux_intégrité"],
+                "sources_domains" : sorted(
+                    {pub["source_domain"] for pub in lot}
+                ),
+            })
         finally:
             self._persistence.fermer()       # Libération garantie
 
@@ -265,11 +292,6 @@ class PipelineService(OrchestreurPort):
 #  CHECKIT_PG_PASSWORD, CHECKIT_VERIFIER_IMAGES).
 # Même mécanisme que la phase d'extraction : python-dotenv.
 if __name__ == "__main__":
-    # -- Bootstrap : racine du projet dans le chemin des imports ----------------
-    RACINE = Path(__file__).resolve().parents[2]
-    if str(RACINE) not in sys.path:
-        sys.path.insert(0, str(RACINE))
-
     from dotenv import load_dotenv           # Chargement du fichier .env
 
     from src.adapters.outbound.persistence.postgresql_adapter import (
@@ -277,7 +299,7 @@ if __name__ == "__main__":
     )
 
     # -- Chargement du .env (les variables déjà exportées gardent priorité) -----
-    load_dotenv(RACINE / ".env")
+    load_dotenv(RACINE_PROJET / ".env")
     if not os.environ.get("CHECKIT_PG_PASSWORD"):
         sys.exit(
             "ERREUR : CHECKIT_PG_PASSWORD absent du fichier .env — "
@@ -293,7 +315,7 @@ if __name__ == "__main__":
     })
 
     service = PipelineService(
-        racine_projet   = RACINE,
+        racine_projet   = RACINE_PROJET,
         persistence     = persistance,
         vérifier_images = os.environ.get(
             "CHECKIT_VERIFIER_IMAGES", "False"

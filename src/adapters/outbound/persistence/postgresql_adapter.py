@@ -31,9 +31,13 @@ from   src.tools.rafael.log_tool import LogTool
 
 
 # ==============================================================================
-# SCHÉMA PHYSIQUE — table publications (aligné sur le livrable L4)
+# SCHÉMA PHYSIQUE — quatre tables alignées sur le modèle de domaine (L4)
 # ==============================================================================
-SQL_CREATION_TABLE = """
+# publications    : le dataset multimodal (entité Publication)
+# sources         : référentiel des sources (entité Source)
+# extraction_runs : historique des runs (entité ExtractionRun)
+# run_sources     : liaison N-N run ↔ sources (run_sources du domaine)
+SQL_CREATION_TABLES = """
     CREATE TABLE IF NOT EXISTS publications (
         id             VARCHAR(64)   PRIMARY KEY,
         title          TEXT          NOT NULL,
@@ -46,6 +50,34 @@ SQL_CREATION_TABLE = """
         captured_at    TIMESTAMPTZ   DEFAULT NOW(),
         metadata       JSONB
     );
+
+    CREATE TABLE IF NOT EXISTS sources (
+        nom_domaine         VARCHAR(255)  PRIMARY KEY,
+        type_source         VARCHAR(50)   NOT NULL,
+        langue              VARCHAR(10),
+        url_base            VARCHAR(2048),
+        méthode_extraction  VARCHAR(100),
+        première_extraction TIMESTAMPTZ,
+        dernière_extraction TIMESTAMPTZ,
+        nb_publications     INTEGER       DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS extraction_runs (
+        run_id          VARCHAR(64)   PRIMARY KEY,
+        started_at      TIMESTAMPTZ   NOT NULL,
+        finished_at     TIMESTAMPTZ,
+        nb_extraites    INTEGER       DEFAULT 0,
+        nb_valides      INTEGER       DEFAULT 0,
+        nb_rejetées     INTEGER       DEFAULT 0,
+        taux_intégrité  FLOAT,
+        erreurs_json    TEXT
+    );
+
+    CREATE TABLE IF NOT EXISTS run_sources (
+        run_id      VARCHAR(64)  REFERENCES extraction_runs (run_id),
+        nom_domaine VARCHAR(255) REFERENCES sources (nom_domaine),
+        PRIMARY KEY (run_id, nom_domaine)
+    );
 """
 
 SQL_INSERTION = """
@@ -54,6 +86,40 @@ SQL_INSERTION = """
          declared_label, lang, captured_at, metadata)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
     ON CONFLICT (id) DO NOTHING;
+"""
+
+# Upsert d'une source : créée à la première extraction, puis seules
+# dernière_extraction et nb_publications évoluent aux runs suivants.
+SQL_UPSERT_SOURCE = """
+    INSERT INTO sources
+        (nom_domaine, type_source, méthode_extraction,
+         première_extraction, dernière_extraction)
+    VALUES (%s, 'rss', 'feedparser', NOW(), NOW())
+    ON CONFLICT (nom_domaine)
+    DO UPDATE SET dernière_extraction = NOW();
+"""
+
+SQL_MAJ_NB_PUBLICATIONS = """
+    UPDATE sources
+    SET    nb_publications = (
+        SELECT COUNT(*) FROM publications
+        WHERE  publications.source_domain = sources.nom_domaine
+    )
+    WHERE  nom_domaine = %s;
+"""
+
+SQL_INSERTION_RUN = """
+    INSERT INTO extraction_runs
+        (run_id, started_at, finished_at, nb_extraites,
+         nb_valides, nb_rejetées, taux_intégrité)
+    VALUES (%s, %s, %s, %s, %s, %s, %s)
+    ON CONFLICT (run_id) DO NOTHING;
+"""
+
+SQL_LIAISON_RUN_SOURCE = """
+    INSERT INTO run_sources (run_id, nom_domaine)
+    VALUES (%s, %s)
+    ON CONFLICT DO NOTHING;
 """
 
 
@@ -92,7 +158,7 @@ class PostgresqlAdapter(PersistencePort):
         if self._connexion is None or self._connexion.closed:
             self._connexion = psycopg2.connect(**self._config)
             with self._connexion.cursor() as curseur:
-                curseur.execute(SQL_CREATION_TABLE)
+                curseur.execute(SQL_CREATION_TABLES)
             self._connexion.commit()
             self._log.LEVEL_6_NOTICE(
                 "PostgresqlAdapter",
@@ -100,6 +166,47 @@ class PostgresqlAdapter(PersistencePort):
                 f"@{self._config.get('host')}",
             )
         return self._connexion
+
+    # ##########################################################################
+    def enregistrer_run(self, run: dict) -> None:
+        """
+        Historise un run d'extraction dans les trois tables associées.
+
+        Séquence (transaction unique) :
+          1. extraction_runs : la ligne de statistiques du run
+          2. sources         : upsert de chaque source impliquée
+             (première_extraction figée, dernière_extraction rafraîchie,
+              nb_publications recalculé depuis publications)
+          3. run_sources     : liaison N-N run ↔ sources
+
+        Idempotence : ON CONFLICT DO NOTHING partout — rejouer un run
+        avec le même run_id n'écrit jamais deux fois.
+        """
+        connexion = self._obtenir_connexion()
+        with connexion.cursor() as curseur:
+            # -- 1. La ligne du run ------------------------------------------------
+            curseur.execute(
+                SQL_INSERTION_RUN,
+                (
+                    run["run_id"],       run["started_at"],
+                    run["finished_at"],  run["nb_extraites"],
+                    run["nb_valides"],   run["nb_rejetées"],
+                    run["taux_intégrité"],
+                ),
+            )
+            # -- 2. et 3. Les sources impliquées et la liaison -----------------------
+            for domaine in run.get("sources_domains", []):
+                curseur.execute(SQL_UPSERT_SOURCE,      (domaine,))
+                curseur.execute(SQL_MAJ_NB_PUBLICATIONS, (domaine,))
+                curseur.execute(
+                    SQL_LIAISON_RUN_SOURCE, (run["run_id"], domaine)
+                )
+        connexion.commit()
+        self._log.LEVEL_6_NOTICE(
+            "PostgresqlAdapter",
+            f"Run historisé : {run['run_id']} "
+            f"({len(run.get('sources_domains', []))} sources)",
+        )
 
     # ##########################################################################
     def sauvegarder(self, publication: dict) -> bool:

@@ -1,0 +1,765 @@
+
+python3 scripts/test_feedparser.py
+python3 scripts/test_requests.py
+python3 scripts/test_bs4.py
+python3 scripts/test_scrapy.py
+python3 scripts/test_selenium.py
+
+
+(m12_ocr) rafael@LAPTOP-8GGFOLQ7:/mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr$ python3 scripts/test_feedparser.py
+python3 scripts/test_requests.py
+python3 scripts/test_bs4.py
+python3 scripts/test_scrapy.py
+python3 scripts/test_selenium.py
+2026-07-06 10:37:02,928 [test_rss] ######################################
+2026-07-06 10:37:02,930 [test_rss]  ┌[test_feedparser]...................: [main] ------------------------------ [début des tests RSS]
+2026-07-06 10:37:02,930 [test_rss] -------------------------------------
+2026-07-06 10:37:02,930 [test_rss] Test source : afp_bluesky (https://bsky.app/profile/did:plc:4ks5wkubjfcbgxvphqkd3wxm/rss)
+2026-07-06 10:37:02,931 [rss]   ┌[FeedparserAdapter]................: [est_disponible] -------------------- [https://bsky.app/profile/did:plc:4ks5wkubjfcbgxvphqkd3wxm/rss]
+2026-07-06 10:37:03,765 [rss]           statut HTTP.................: 200
+2026-07-06 10:37:03,765 [rss]   └[FeedparserAdapter]................: [est_disponible] -------------------- [OK]
+2026-07-06 10:37:03,766 [rss] ######################################
+2026-07-06 10:37:03,767 [rss]  ┌[FeedparserAdapter].................: [extraire_données] ------------------ [https://bsky.app/profile/did:plc:4ks5wkubjfcbgxvphqkd3wxm/rss]
+2026-07-06 10:37:04,485 [rss]           entrées trouvées............: 30
+2026-07-06 10:37:04,485 [rss]           source......................: AFP Factuel Bluesky RSS
+2026-07-06 10:37:05,741 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇧🇫 🚁 Un hélicoptère "chargé d'une mission d'espion
+2026-07-06 10:37:06,882 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇻🇪 Cet immeuble s'est effondré après le double séi
+2026-07-06 10:37:08,170 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇺🇸 Des "antifas" auraient déversé des algues dans
+2026-07-06 10:37:09,443 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇻🇪 Une vidéo d'un immeuble détruit par le double s
+2026-07-06 10:37:11,102 [rss] [INFO     ] FeedparserAdapter [FAKE] Un porte-drapeau sud-africain tombe lors de la cérémonie d’o
+2026-07-06 10:37:12,348 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇨🇩 ✊ Une représentante de l'ONG Human Rights Watch
+2026-07-06 10:37:13,581 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇧🇫 ⚽ 🇺🇸 Ibrahim Traoré condamne dans une vidéo les
+2026-07-06 10:37:14,742 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : ☪️✝️ Une vidéo du baptême d'une musulmane converti
+2026-07-06 10:37:15,891 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 💉 La Russie annonce "un vaccin contre le cancer" p
+2026-07-06 10:37:17,134 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇿🇦 ⚽ Le porte-drapeau de l'Afrique du Sud a trébuc
+2026-07-06 10:37:19,753 [rss] [INFO     ] FeedparserAdapter [FAKE] 🔎🤖 Trop parfaite pour être détectée ? L'IA génère aujourd'hu
+2026-07-06 10:37:21,044 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇫🇷⚽️🇸🇳 Un dérapage raciste d'un commentateur argen
+2026-07-06 10:37:22,283 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇴🇲🇮🇷 Le sultan d'Oman a signé un décret récent pou
+2026-07-06 10:37:23,941 [rss] [INFO     ] FeedparserAdapter [FAKE] 🔎🤖 Comment détecter l'IA ? C'est la première question que l'
+2026-07-06 10:37:25,156 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🪖 "70.000 mercenaires français" combattraient en U
+2026-07-06 10:37:26,383 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🧪🤖 Peut-on manipuler une IA de l'intérieur ?
+2026-07-06 10:37:27,660 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇦🇱 🏖️ Une vidéo d'une mobilisation contre les proj
+2026-07-06 10:37:28,897 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇳🇬🇿🇦 Des Nigérians attaquent un commerce détenu pa
+2026-07-06 10:37:30,118 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇮🇳📵 Une vidéo d'une antenne incendiée en signe de
+2026-07-06 10:37:31,327 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇺🇦 🇺🇸 Une photo montrant l'évacuation en urgence d
+2026-07-06 10:37:32,474 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇫🇷⚽️ Le départ de Kylian Mbappé du PSG lié au prés
+2026-07-06 10:37:33,657 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : ⛪💥 Une vidéo montrant deux soldats israéliens sacc
+2026-07-06 10:37:34,863 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 📱 Des posts sur les réseaux sociaux redirigent ver
+2026-07-06 10:37:36,164 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🏳️‍⚧️ Une transition de genre donnerait lieu à des
+2026-07-06 10:37:37,390 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇫🇷 Face à certains chiffres brandis sur le thème d
+2026-07-06 10:37:38,605 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🇰🇭 ✈️ Les citoyens de pays africains sommés de qui
+2026-07-06 10:37:40,296 [rss] [INFO     ] FeedparserAdapter [FAKE] La destruction d’un couvent dans le sud du Liban en mai 2026
+2026-07-06 10:37:41,511 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : ⛪💥 L'armée et les autorités israéliennes ont nié l
+2026-07-06 10:37:42,684 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : 🌡️ La vague de chaleur de ce mois de mai n'est pas
+2026-07-06 10:37:44,338 [rss] [INFO     ] FeedparserAdapter [FAKE] 📢 Saviez-vous que l'AFP dispose d'une formation en libre acc
+2026-07-06 10:37:44,338 [rss]           publications valides........: 5
+2026-07-06 10:37:44,338 [rss]           entrées rejetées............: 25
+2026-07-06 10:37:44,338 [rss]           taux d'intégrité............: 16.7%
+2026-07-06 10:37:44,345 [rss]  └[FeedparserAdapter].................: [extraire_données] ------------------ [5 publications extraites Exec: 00:00:39.626250]
+2026-07-06 10:37:44,345 [rss] **************************************
+2026-07-06 10:37:44,345 [test_rss]           afp_bluesky — total.........: 5
+2026-07-06 10:37:44,345 [test_rss]           afp_bluesky — REAL..........: 0
+2026-07-06 10:37:44,345 [test_rss]           afp_bluesky — FAKE..........: 5
+2026-07-06 10:37:44,345 [test_rss]  ------------------------------------
+2026-07-06 10:37:44,345 [test_rss]  Exemple
+2026-07-06 10:37:44,346 [test_rss]           titre.......................: Un porte-drapeau sud-africain tombe lors de la cérémonie d’ouverture d
+2026-07-06 10:37:44,346 [test_rss]           label.......................: FAKE
+2026-07-06 10:37:44,346 [test_rss]           image.......................: https://video.bsky.app/watch/did%3Aplc%3A4ks5wkubjfcbgxvphqk
+2026-07-06 10:37:44,346 [test_rss] -------------------------------------
+2026-07-06 10:37:44,346 [test_rss] Test source : euvsdisinfo (https://euvsdisinfo.eu/feed/)
+2026-07-06 10:37:44,346 [rss]   ┌[FeedparserAdapter]................: [est_disponible] -------------------- [https://euvsdisinfo.eu/feed/]
+2026-07-06 10:37:44,855 [rss]           statut HTTP.................: 200
+2026-07-06 10:37:44,855 [rss]   └[FeedparserAdapter]................: [est_disponible] -------------------- [OK]
+2026-07-06 10:37:44,857 [rss] ######################################
+2026-07-06 10:37:44,857 [rss]  ┌[FeedparserAdapter].................: [extraire_données] ------------------ [https://euvsdisinfo.eu/feed/]
+2026-07-06 10:37:45,482 [rss]           entrées trouvées............: 10
+2026-07-06 10:37:45,482 [rss]           source......................: EUvsDisinfo RSS
+2026-07-06 10:37:46,684 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Russia’s information war against Ukraine’s Europea
+2026-07-06 10:37:47,894 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Explosives and propaganda: Russia’s dual-use drone
+2026-07-06 10:37:49,046 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : How Moscow tries to cover up its failures on the U
+2026-07-06 10:37:50,201 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : New EEAS-CCD report exposes Russian FIMI targeting
+2026-07-06 10:37:51,355 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Warmongering NATO, peaceful Belarus, and Bulgaria’
+2026-07-06 10:37:53,455 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Yandex: From tech innovation to information contro
+2026-07-06 10:37:54,650 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Religion, drones, and “piracy”: latest trends in R
+2026-07-06 10:37:55,856 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Victim-blaming Kyiv, pressuring Moldova, and drone
+2026-07-06 10:37:57,053 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : The dog that didn’t bark: What the Danish election
+2026-07-06 10:37:58,289 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Tough love: Spies, dating apps and the dark side o
+2026-07-06 10:37:58,290 [rss]           publications valides........: 0
+2026-07-06 10:37:58,290 [rss]           entrées rejetées............: 10
+2026-07-06 10:37:58,290 [rss]           taux d'intégrité............: 0.0%
+2026-07-06 10:37:58,290 [rss]  └[FeedparserAdapter].................: [extraire_données] ------------------ [0 publications extraites Exec: 00:00:12.482013]
+2026-07-06 10:37:58,290 [rss] **************************************
+2026-07-06 10:37:58,291 [test_rss]           euvsdisinfo — total.........: 0
+2026-07-06 10:37:58,291 [test_rss]           euvsdisinfo — REAL..........: 0
+2026-07-06 10:37:58,291 [test_rss]           euvsdisinfo — FAKE..........: 0
+2026-07-06 10:37:58,291 [test_rss] -------------------------------------
+2026-07-06 10:37:58,291 [test_rss] Test source : hoaxbuster (https://www.hoaxbuster.com/rss/)
+2026-07-06 10:37:58,291 [rss]   ┌[FeedparserAdapter]................: [est_disponible] -------------------- [https://www.hoaxbuster.com/rss/]
+2026-07-06 10:38:29,467 [rss] [ERROR    ] FeedparserAdapter Source inaccessible : HTTPSConnectionPool(host='www.hoaxbuster.com', port=443): Read timed out. (read timeout=30)
+2026-07-06 10:38:29,467 [test_rss] [WARNING  ] test_feedparser Source hoaxbuster hors ligne — ignorée
+2026-07-06 10:38:29,467 [test_rss] -------------------------------------
+2026-07-06 10:38:29,467 [test_rss] Test source : elpais (https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada)
+2026-07-06 10:38:29,468 [rss]   ┌[FeedparserAdapter]................: [est_disponible] -------------------- [https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada]
+2026-07-06 10:38:29,732 [rss]           statut HTTP.................: 200
+2026-07-06 10:38:29,732 [rss]   └[FeedparserAdapter]................: [est_disponible] -------------------- [OK]
+2026-07-06 10:38:29,734 [rss] ######################################
+2026-07-06 10:38:29,734 [rss]  ┌[FeedparserAdapter].................: [extraire_données] ------------------ [https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada]
+2026-07-06 10:38:30,714 [rss]           entrées trouvées............: 148
+2026-07-06 10:38:30,714 [rss]           source......................: El País MRSS
+2026-07-06 10:38:31,946 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Más del 65% considera que el ‘lawfare’ existe en E
+2026-07-06 10:38:31,946 [rss] [INFO     ] FeedparserAdapter [REAL] El sesgo político en la percepción de la independencia judic
+2026-07-06 10:38:33,155 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : PP y Vox aventajan en más de 12 puntos a PSOE, Sum
+2026-07-06 10:38:34,359 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : ¿Dónde hay alertas por calor? Consulte en qué muni
+2026-07-06 10:38:34,360 [rss] [INFO     ] FeedparserAdapter [REAL] Nicolás Sartorius: “La derecha que viene no es la derecha de
+2026-07-06 10:38:34,360 [rss] [INFO     ] FeedparserAdapter [REAL] La lluvia de ceros en Euskera en la PAU vasca, en los tribun
+2026-07-06 10:38:34,360 [rss] [INFO     ] FeedparserAdapter [REAL] La FIFA retira la tarjeta roja al goleador estadounidense Ba
+2026-07-06 10:38:34,361 [rss] [INFO     ] FeedparserAdapter [REAL] El martillo vikingo de Haaland demuele a la Brasil de Ancelo
+2026-07-06 10:38:34,361 [rss] [INFO     ] FeedparserAdapter [REAL] Cristiano exprime su final ante Lamine el día que España bus
+2026-07-06 10:38:34,361 [rss] [INFO     ] FeedparserAdapter [REAL] Inglaterra termina con el sueño mundial de México
+2026-07-06 10:38:34,361 [rss] [INFO     ] FeedparserAdapter [REAL] ¿Cómo están los cruces del Mundial? Consulte los rivales pro
+2026-07-06 10:38:34,362 [rss] [INFO     ] FeedparserAdapter [REAL] ¿Serán limpias las elecciones de noviembre en EE UU?
+2026-07-06 10:38:34,362 [rss] [INFO     ] FeedparserAdapter [REAL] Políticos que traen mala suerte
+2026-07-06 10:38:34,362 [rss] [INFO     ] FeedparserAdapter [REAL] Quiénes son los supremacistas blancos enmascarados que desfi
+2026-07-06 10:38:34,363 [rss] [INFO     ] FeedparserAdapter [REAL] Al menos 11 muertos en un ataque ruso contra Kiev en la vísp
+2026-07-06 10:38:34,363 [rss] [INFO     ] FeedparserAdapter [REAL] 1.200 dólares al día: el precio de una máquina para sacar a
+2026-07-06 10:38:34,363 [rss] [INFO     ] FeedparserAdapter [REAL] El sector del ‘lobby’ reclama la “aprobación urgente” de una
+2026-07-06 10:38:34,364 [rss] [INFO     ] FeedparserAdapter [REAL] La justicia francesa decide entre el todo o nada para Marine
+2026-07-06 10:38:34,364 [rss] [INFO     ] FeedparserAdapter [REAL] Los cinco frentes abiertos que amenazan el futuro de la OTAN
+2026-07-06 10:38:34,365 [rss] [INFO     ] FeedparserAdapter [REAL] Ian Linnell: “El crecimiento en España podría ralentizarse s
+2026-07-06 10:38:34,365 [rss] [INFO     ] FeedparserAdapter [REAL] Solomy Balungi Bossa, jueza del Tribunal Penal Internacional
+2026-07-06 10:38:34,365 [rss] [INFO     ] FeedparserAdapter [REAL] El fuego originado en Soneja (Castellón) entra en el parque
+2026-07-06 10:38:34,365 [rss] [INFO     ] FeedparserAdapter [REAL] Javier Rufino, fiscal coordinador de Medio Ambiente: “Me sor
+2026-07-06 10:38:34,366 [rss] [INFO     ] FeedparserAdapter [REAL] Migrantes que enseñan castellano a migrantes: “Si a mí me ay
+2026-07-06 10:38:35,613 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Quién ganó y quién perdió en Ormuz
+2026-07-06 10:38:35,614 [rss] [INFO     ] FeedparserAdapter [REAL] Dormir en verano: La ciencia del sueño roto por el calor
+2026-07-06 10:38:35,614 [rss] [INFO     ] FeedparserAdapter [REAL] Madonna se hace un ‘revival’ de sí misma: solo la reina del
+2026-07-06 10:38:35,614 [rss] [INFO     ] FeedparserAdapter [REAL] Sylvester Stallone cumple 80 años en plena batalla por su le
+2026-07-06 10:38:35,615 [rss] [INFO     ] FeedparserAdapter [REAL] “De pronto el DJ pide 300.000 euros”: Fabrik, la mítica disc
+2026-07-06 10:38:35,615 [rss] [INFO     ] FeedparserAdapter [REAL] Cocina una vez, come tres: seis recetas de cremas frías para
+2026-07-06 10:38:35,615 [rss] [INFO     ] FeedparserAdapter [REAL] Vitinha, el genio que mueve a Portugal, desafía a España en
+2026-07-06 10:38:35,615 [rss] [INFO     ] FeedparserAdapter [REAL] Cuando todo se complica, Álex Baena: así ha forjado su carác
+2026-07-06 10:38:35,616 [rss] [INFO     ] FeedparserAdapter [REAL] La última lección de Bielsa
+2026-07-06 10:38:35,616 [rss] [INFO     ] FeedparserAdapter [REAL] No son cromos: eres tú y algo más
+2026-07-06 10:38:35,616 [rss] [INFO     ] FeedparserAdapter [REAL] El espejo finlandés
+2026-07-06 10:38:35,616 [rss] [INFO     ] FeedparserAdapter [REAL] Amnesia del arte español
+2026-07-06 10:38:35,617 [rss] [INFO     ] FeedparserAdapter [REAL] Los castigos de Milei
+2026-07-06 10:38:35,617 [rss] [INFO     ] FeedparserAdapter [REAL] El trauma del 23-J
+2026-07-06 10:38:35,617 [rss] [INFO     ] FeedparserAdapter [REAL] Y la empatía también se transformó en trinchera
+2026-07-06 10:38:35,618 [rss] [INFO     ] FeedparserAdapter [REAL] Esas manos
+2026-07-06 10:38:35,618 [rss] [INFO     ] FeedparserAdapter [REAL] En la huerta gallega de David Chipperfield: donde recuperar
+2026-07-06 10:38:35,618 [rss] [INFO     ] FeedparserAdapter [REAL] Adolescente busca un hogar en verano: cuando la acogida temp
+2026-07-06 10:38:35,618 [rss] [INFO     ] FeedparserAdapter [REAL] De Darwin a los topillos: la paradoja de la atracción entre
+2026-07-06 10:38:35,619 [rss] [INFO     ] FeedparserAdapter [REAL] Cien años del Himno a Burgos: una canción que se aprende en
+2026-07-06 10:38:35,619 [rss] [INFO     ] FeedparserAdapter [REAL] Teruel será un punto clave para el fenómeno que atrae a 10 m
+2026-07-06 10:38:35,619 [rss] [INFO     ] FeedparserAdapter [REAL] ¿Debemos confiar en los demás?
+2026-07-06 10:38:35,620 [rss] [INFO     ] FeedparserAdapter [REAL] Un muerto y siete heridos en dos accidentes en carreteras de
+2026-07-06 10:38:35,620 [rss] [INFO     ] FeedparserAdapter [REAL] Madrid, laboratorio de la ‘desokupación’
+2026-07-06 10:38:35,620 [rss] [INFO     ] FeedparserAdapter [REAL] Ayuso activó un centro concertado en 2022 y ahora un grupo i
+2026-07-06 10:38:35,621 [rss] [INFO     ] FeedparserAdapter [REAL] Lectures per a l’estiu? 30 escriptors recomanen el millor ll
+2026-07-06 10:38:35,621 [rss] [INFO     ] FeedparserAdapter [REAL] “Hemos llegado tarde. La culpa la tenemos todos”
+2026-07-06 10:38:36,869 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Guia cultural per a l’estiu 2026
+2026-07-06 10:38:36,870 [rss] [INFO     ] FeedparserAdapter [REAL] Así son los socialistas que avanzan en EE UU contra los que
+2026-07-06 10:38:36,870 [rss] [INFO     ] FeedparserAdapter [REAL] Tal vez las vidas americanas sí tengan una segunda oportunid
+2026-07-06 10:38:36,871 [rss] [INFO     ] FeedparserAdapter [REAL] Carl Skau, director del Programa Mundial de Alimentos: “Pedi
+2026-07-06 10:38:36,871 [rss] [INFO     ] FeedparserAdapter [REAL] La paradoja de Trump en Venezuela: el apoyo a un régimen al
+2026-07-06 10:38:36,871 [rss] [INFO     ] FeedparserAdapter [REAL] Los regalos de un criptomillonario condenado por fraude pone
+2026-07-06 10:38:36,872 [rss] [INFO     ] FeedparserAdapter [REAL] China le da la vuelta al ‘shock’ energético y sale airosa de
+2026-07-06 10:38:36,872 [rss] [INFO     ] FeedparserAdapter [REAL] La disputa entre Francia y Alemania va más allá del FCAS: lo
+2026-07-06 10:38:36,872 [rss] [INFO     ] FeedparserAdapter [REAL] La UE acelera para tener listos sus próximos presupuestos ba
+2026-07-06 10:38:36,872 [rss] [INFO     ] FeedparserAdapter [REAL] ING compra el 40% de Singular Bank y lidera su nuevo grupo d
+2026-07-06 10:38:36,873 [rss] [INFO     ] FeedparserAdapter [REAL] Esyjet acepta la oferta de compra del fondo Castlelake por 6
+2026-07-06 10:38:36,873 [rss] [INFO     ] FeedparserAdapter [REAL] La tortilla de patatas española sabe a francesa
+2026-07-06 10:38:36,873 [rss] [INFO     ] FeedparserAdapter [REAL] Tom McCarthy, la mecánica de la literatura: “Me encanta leer
+2026-07-06 10:38:36,873 [rss] [INFO     ] FeedparserAdapter [REAL] Danny Elfman, el músico macabro de Hollywood: “No sé de qué
+2026-07-06 10:38:36,874 [rss] [INFO     ] FeedparserAdapter [REAL] 60 años de gloriosa psicodelia
+2026-07-06 10:38:36,874 [rss] [INFO     ] FeedparserAdapter [REAL] ‘De todo tiene’: un Trapiello menos beligerante y más emotiv
+2026-07-06 10:38:36,874 [rss] [INFO     ] FeedparserAdapter [REAL] ¿Es el periodismo paracaidista la mejor manera de contar una
+2026-07-06 10:38:36,875 [rss] [INFO     ] FeedparserAdapter [REAL] Alexander Bublik: “Si con 30 años aún no has madurado, tiene
+2026-07-06 10:38:36,875 [rss] [INFO     ] FeedparserAdapter [REAL] Quebec, una apuesta por el trail en el país de los deportes
+2026-07-06 10:38:36,875 [rss] [INFO     ] FeedparserAdapter [REAL] El fútbol, puro teatro
+2026-07-06 10:38:36,875 [rss] [INFO     ] FeedparserAdapter [REAL] Isaac del Toro se impone en Montjuïc en un final de exhibici
+2026-07-06 10:38:36,876 [rss] [INFO     ] FeedparserAdapter [REAL] Shengelia firma la derrota de España
+2026-07-06 10:38:36,876 [rss] [INFO     ] FeedparserAdapter [REAL] Miquel Cano, el cocinero que recupera recetas olvidadas en r
+2026-07-06 10:38:36,876 [rss] [INFO     ] FeedparserAdapter [REAL] Almortas manchegas: de legumbre prohibida a cultivo esencial
+2026-07-06 10:38:36,876 [rss] [INFO     ] FeedparserAdapter [REAL] El escondite de Sybilla en Mallorca: “Esta casa me ha ayudad
+2026-07-06 10:38:36,877 [rss] [INFO     ] FeedparserAdapter [REAL] Cinco estrategias para reducir las interrupciones digitales
+2026-07-06 10:38:36,877 [rss] [INFO     ] FeedparserAdapter [REAL] El “chasco” de Amantaní, una reflexión sobre cómo el turismo
+2026-07-06 10:38:36,877 [rss] [INFO     ] FeedparserAdapter [REAL] Gloria Labay, matrona: “Aceptar la no maternidad es un umbra
+2026-07-06 10:38:36,878 [rss] [INFO     ] FeedparserAdapter [REAL] Isa Calderón: “Yo de joven no era feliz, no encontraba mi si
+2026-07-06 10:38:36,878 [rss] [INFO     ] FeedparserAdapter [REAL] El chándal corto de hombre que triunfa en Amazon: suave, tra
+2026-07-06 10:38:36,878 [rss] [INFO     ] FeedparserAdapter [REAL] 50 años buscando a Pertur
+2026-07-06 10:38:36,879 [rss] [INFO     ] FeedparserAdapter [REAL] La terapeuta invisible que se coló en las vidas de los Andic
+2026-07-06 10:38:38,135 [rss] [WARNING  ] FeedparserAdapter Image absente — entrée rejetée : Diez años de La Manada: la respuesta contra la vio
+2026-07-06 10:38:38,136 [rss] [INFO     ] FeedparserAdapter [REAL] Gabriel Rufián, el auge del líder (percibido como) auténtico
+2026-07-06 10:38:38,136 [rss] [INFO     ] FeedparserAdapter [REAL] Tres de los hijos del ayatolá Jameneí acuden al funeral, per
+2026-07-06 10:38:38,136 [rss] [INFO     ] FeedparserAdapter [REAL] Los hijos del manicomio del horror en Brasil exigen justicia
+2026-07-06 10:38:38,137 [rss] [INFO     ] FeedparserAdapter [REAL] El Kremlin abre la veda contra los creadores de pornografía
+2026-07-06 10:38:38,137 [rss] [INFO     ] FeedparserAdapter [REAL] Mueren cuatro personas de una familia y una menor se encuent
+2026-07-06 10:38:38,137 [rss] [INFO     ] FeedparserAdapter [REAL] Moreno toma posesión en Andalucía: “Los valores no cambian.
+2026-07-06 10:38:38,137 [rss] [INFO     ] FeedparserAdapter [REAL] Robles: “Pese a lo que diga Trump, los mandos de la OTAN sab
+2026-07-06 10:38:38,138 [rss] [INFO     ] FeedparserAdapter [REAL] Adaptarse o morir: el coche eléctrico chino pone contra las
+2026-07-06 10:38:38,138 [rss] [INFO     ] FeedparserAdapter [REAL] El Gobierno negocia un decreto de vivienda para atraer a tod
+2026-07-06 10:38:38,138 [rss] [INFO     ] FeedparserAdapter [REAL] Tres aviones problemáticos y la competencia por Estados Unid
+2026-07-06 10:38:38,138 [rss] [INFO     ] FeedparserAdapter [REAL] Qué ha ocurrido con La Manada diez años después
+2026-07-06 10:38:38,139 [rss] [INFO     ] FeedparserAdapter [REAL] Elisabeth Martínez: “Yo misma lucho por verme como una mujer
+2026-07-06 10:38:38,139 [rss] [INFO     ] FeedparserAdapter [REAL] El Orgullo planta cara en Madrid al auge de la extrema derec
+2026-07-06 10:38:38,139 [rss] [INFO     ] FeedparserAdapter [REAL] Bajemos las ratios como condición de la equidad
+2026-07-06 10:38:38,139 [rss] [INFO     ] FeedparserAdapter [REAL] El derecho a disfrutar de la cultura: cuando las familias de
+2026-07-06 10:38:38,140 [rss] [INFO     ] FeedparserAdapter [REAL] La Generalitat autoriza un grado de Medicina privado en el C
+2026-07-06 10:38:38,140 [rss] [INFO     ] FeedparserAdapter [REAL] Dos familias frente al calor extremo: los Fernández en Córdo
+2026-07-06 10:38:38,140 [rss] [INFO     ] FeedparserAdapter [REAL] Del mastín a la carabela portuguesa: ¿qué hacer si te encuen
+2026-07-06 10:38:38,140 [rss] [INFO     ] FeedparserAdapter [REAL] Un incendio golpea el corazón del parque natural de Despeñap
+2026-07-06 10:38:38,141 [rss] [INFO     ] FeedparserAdapter [REAL] Ratones y humanos olfatean igual
+2026-07-06 10:38:38,141 [rss] [INFO     ] FeedparserAdapter [REAL] Rescate en el espacio: despega la misión de emergencia para
+2026-07-06 10:38:38,141 [rss] [INFO     ] FeedparserAdapter [REAL] El hermano mayor perjudica la salud y la economía del pequeñ
+2026-07-06 10:38:38,142 [rss] [INFO     ] FeedparserAdapter [REAL] El lenguaje de los otros animales: Cómo la IA nos está ayuda
+2026-07-06 10:38:38,142 [rss] [INFO     ] FeedparserAdapter [REAL] Las notas de la comunidad de X no funcionan con la política:
+2026-07-06 10:38:38,142 [rss] [INFO     ] FeedparserAdapter [REAL] Adiós a los discos de la PlayStation: Sony dejará de publica
+2026-07-06 10:38:38,142 [rss] [INFO     ] FeedparserAdapter [REAL] El Valencia Basket se queda en el chasis
+2026-07-06 10:38:38,143 [rss] [INFO     ] FeedparserAdapter [REAL] El Real Madrid hace oficial el fichaje de Dumfries
+2026-07-06 10:38:38,143 [rss] [INFO     ] FeedparserAdapter [REAL] A Marruecos le llega con Bono y Ounahi en su función más flo
+2026-07-06 10:38:38,143 [rss] [INFO     ] FeedparserAdapter [REAL] Los diarios secretos del último amor de Lorca: “Mi dolor fue
+2026-07-06 10:38:38,143 [rss] [INFO     ] FeedparserAdapter [REAL] Radiografía de los festivales de música en España: “Se han c
+2026-07-06 10:38:38,144 [rss] [INFO     ] FeedparserAdapter [REAL] Orson Welles vuelve a enfrentarse a los molinos de Don Quijo
+2026-07-06 10:38:38,144 [rss] [INFO     ] FeedparserAdapter [REAL] Grison, el “sex symbol’ improbable” debuta como presentador
+2026-07-06 10:38:38,144 [rss] [INFO     ] FeedparserAdapter [REAL] A la socorrista sí que se la liaron parda
+2026-07-06 10:38:38,144 [rss] [INFO     ] FeedparserAdapter [REAL] La repetición de las oposiciones de RTVE por una filtración
+2026-07-06 10:38:38,145 [rss] [INFO     ] FeedparserAdapter [REAL] Taylor Swift y Travis Kelce se casan en una boda blindada en
+2026-07-06 10:38:38,145 [rss] [INFO     ] FeedparserAdapter [REAL] Pepe Ruiz y Eduardo Castejón o cómo hacer una película que p
+2026-07-06 10:38:38,145 [rss] [INFO     ] FeedparserAdapter [REAL] Donald Trump acusa a famosos como Julia Roberts y Robert De
+2026-07-06 10:38:38,146 [rss] [INFO     ] FeedparserAdapter [REAL] Daniel Ngamije, jefe de malaria de la OMS: “El impacto globa
+2026-07-06 10:38:38,146 [rss] [INFO     ] FeedparserAdapter [REAL] Cerrojazo informativo en Uganda: el jefe militar e hijo del
+2026-07-06 10:38:38,146 [rss] [INFO     ] FeedparserAdapter [REAL] El taxista que lleva 40 años regalando libros por todo Bueno
+2026-07-06 10:38:38,146 [rss] [INFO     ] FeedparserAdapter [REAL] Sara Correia, la indómita del fado que convirtió su origen h
+2026-07-06 10:38:38,147 [rss] [INFO     ] FeedparserAdapter [REAL] De símbolo cultural a firma ‘maldita’: Bershka resucita Ed H
+2026-07-06 10:38:38,147 [rss] [INFO     ] FeedparserAdapter [REAL] Un día en el mar con las tendencias decisivas del verano 202
+2026-07-06 10:38:38,147 [rss] [INFO     ] FeedparserAdapter [REAL] El barrio que dio cobijo a los gais y después los expulsó: “
+2026-07-06 10:38:38,147 [rss] [INFO     ] FeedparserAdapter [REAL] Los peligros del ‘ballmaxxing’: pinchazos caseros de suero p
+2026-07-06 10:38:38,148 [rss] [INFO     ] FeedparserAdapter [REAL] El peaje en la Fontana di Trevi, ecotasas para subir al Teid
+2026-07-06 10:38:38,148 [rss] [INFO     ] FeedparserAdapter [REAL] Viaje a Australia Occidental, la versión más salvaje, remota
+2026-07-06 10:38:38,148 [rss] [INFO     ] FeedparserAdapter [REAL] Jonathan Haidt, psicólogo social: “La posibilidad de que la
+2026-07-06 10:38:38,149 [rss] [INFO     ] FeedparserAdapter [REAL] Más Ayuso tras el lío andaluz
+2026-07-06 10:38:38,149 [rss] [INFO     ] FeedparserAdapter [REAL] Preparénse para otras vacaciones masificadas y caras: los gi
+2026-07-06 10:38:38,150 [rss] [INFO     ] FeedparserAdapter [REAL] Cuando las vacaciones son motivo de guerra en la oficina
+2026-07-06 10:38:38,150 [rss] [INFO     ] FeedparserAdapter [REAL] El maltrato a los directores de orquesta
+2026-07-06 10:38:38,150 [rss] [INFO     ] FeedparserAdapter [REAL] ‘Un paraíso de escombros’, de Gustavo Martín Garzo: el hechi
+2026-07-06 10:38:38,150 [rss] [INFO     ] FeedparserAdapter [REAL] Menú semanal de El Comidista (6 a 12 de julio)
+2026-07-06 10:38:38,150 [rss] [INFO     ] FeedparserAdapter [REAL] Ensalada de tzatziki con garbanzos, la receta para salvar un
+2026-07-06 10:38:38,151 [rss] [INFO     ] FeedparserAdapter [REAL] EL PAÍS lleva a Cibeles de Cine una exposición fotográfica p
+2026-07-06 10:38:38,151 [rss] [INFO     ] FeedparserAdapter [REAL] Impermeable y con compartimento frigorífico: así es la bolsa
+2026-07-06 10:38:38,151 [rss] [INFO     ] FeedparserAdapter [REAL] Parece una tumbona, pero es una colchoneta que puedes usar d
+2026-07-06 10:38:38,151 [rss] [INFO     ] FeedparserAdapter [REAL] 5 bañadores negros en Amazon que son todo menos aburridos
+2026-07-06 10:38:38,151 [rss] [INFO     ] FeedparserAdapter [REAL] 15 productos de Amazon para dormir mejor este verano y desca
+2026-07-06 10:38:38,152 [rss] [INFO     ] FeedparserAdapter [REAL] ¿Por qué tus cuadros acaban cayéndose cuando usas tiras adhe
+2026-07-06 10:38:38,152 [rss] [INFO     ] FeedparserAdapter [REAL] Desde que uso este labial por menos de 30€, no retoco el col
+2026-07-06 10:38:38,152 [rss] [INFO     ] FeedparserAdapter [REAL] He probado seis máscaras de pestañas superventas y te cuento
+2026-07-06 10:38:38,152 [rss]           publications valides........: 141
+2026-07-06 10:38:38,152 [rss]           entrées rejetées............: 7
+2026-07-06 10:38:38,153 [rss]           taux d'intégrité............: 95.3%
+2026-07-06 10:38:38,153 [rss]  └[FeedparserAdapter].................: [extraire_données] ------------------ [141 publications extraites Exec: 00:00:08.419307]
+2026-07-06 10:38:38,153 [rss] **************************************
+2026-07-06 10:38:38,155 [test_rss]           elpais — total..............: 141
+2026-07-06 10:38:38,155 [test_rss]           elpais — REAL...............: 141
+2026-07-06 10:38:38,155 [test_rss]           elpais — FAKE...............: 0
+2026-07-06 10:38:38,155 [test_rss]  ------------------------------------
+2026-07-06 10:38:38,155 [test_rss]  Exemple
+2026-07-06 10:38:38,155 [test_rss]           titre.......................: El sesgo político en la percepción de la independencia judicial, al de
+2026-07-06 10:38:38,155 [test_rss]           label.......................: REAL
+2026-07-06 10:38:38,155 [test_rss]           image.......................: https://imagenes.elpais.com/resizer/v2/EKJL26FJH5J4FLPUMPWS3
+2026-07-06 10:38:38,156 [test_rss] -------------------------------------
+2026-07-06 10:38:38,156 [test_rss] Test source : politifact (https://www.politifact.com/rss/factchecks/)
+2026-07-06 10:38:38,156 [rss]   ┌[FeedparserAdapter]................: [est_disponible] -------------------- [https://www.politifact.com/rss/factchecks/]
+2026-07-06 10:38:38,473 [rss]           statut HTTP.................: 200
+2026-07-06 10:38:38,474 [rss]   └[FeedparserAdapter]................: [est_disponible] -------------------- [OK]
+2026-07-06 10:38:38,475 [rss] ######################################
+2026-07-06 10:38:38,476 [rss]  ┌[FeedparserAdapter].................: [extraire_données] ------------------ [https://www.politifact.com/rss/factchecks/]
+2026-07-06 10:38:38,821 [rss]           entrées trouvées............: 20
+2026-07-06 10:38:38,822 [rss]           source......................: PolitiFact RSS
+2026-07-06 10:38:38,826 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,831 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,832 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,833 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,834 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,836 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,837 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,838 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,839 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,839 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,840 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,840 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,841 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,842 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,842 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,843 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,843 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,844 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,844 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,845 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'rating introuvable' (source : politifact.com)
+2026-07-06 10:38:38,845 [rss]           publications valides........: 0
+2026-07-06 10:38:38,845 [rss]           entrées rejetées............: 20
+2026-07-06 10:38:38,845 [rss]           taux d'intégrité............: 0.0%
+2026-07-06 10:38:38,846 [rss]  └[FeedparserAdapter].................: [extraire_données] ------------------ [0 publications extraites Exec: 00:00:00.370476]
+2026-07-06 10:38:38,846 [rss] **************************************
+2026-07-06 10:38:38,846 [test_rss]           politifact — total..........: 0
+2026-07-06 10:38:38,846 [test_rss]           politifact — REAL...........: 0
+2026-07-06 10:38:38,846 [test_rss]           politifact — FAKE...........: 0
+2026-07-06 10:38:38,846 [test_rss] -------------------------------------
+2026-07-06 10:38:38,846 [test_rss] Test source : decodeurs (https://www.lemonde.fr/les-decodeurs/rss_full.xml)
+2026-07-06 10:38:38,846 [rss]   ┌[FeedparserAdapter]................: [est_disponible] -------------------- [https://www.lemonde.fr/les-decodeurs/rss_full.xml]
+2026-07-06 10:38:39,018 [rss]           statut HTTP.................: 200
+2026-07-06 10:38:39,018 [rss]   └[FeedparserAdapter]................: [est_disponible] -------------------- [OK]
+2026-07-06 10:38:39,019 [rss] ######################################
+2026-07-06 10:38:39,019 [rss]  ┌[FeedparserAdapter].................: [extraire_données] ------------------ [https://www.lemonde.fr/les-decodeurs/rss_full.xml]
+2026-07-06 10:38:39,170 [rss]           entrées trouvées............: 20
+2026-07-06 10:38:39,170 [rss]           source......................: Les Décodeurs (Le Monde) RSS
+2026-07-06 10:38:39,170 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,170 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,170 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,170 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,171 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,171 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,171 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,171 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,171 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,172 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,172 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,172 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,172 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,172 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,172 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,173 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,173 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,173 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,173 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,173 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : lemonde.fr)
+2026-07-06 10:38:39,173 [rss]           publications valides........: 0
+2026-07-06 10:38:39,174 [rss]           entrées rejetées............: 20
+2026-07-06 10:38:39,174 [rss]           taux d'intégrité............: 0.0%
+2026-07-06 10:38:39,174 [rss]  └[FeedparserAdapter].................: [extraire_données] ------------------ [0 publications extraites Exec: 00:00:00.154981]
+2026-07-06 10:38:39,174 [rss] **************************************
+2026-07-06 10:38:39,174 [test_rss]           decodeurs — total...........: 0
+2026-07-06 10:38:39,174 [test_rss]           decodeurs — REAL............: 0
+2026-07-06 10:38:39,175 [test_rss]           decodeurs — FAKE............: 0
+2026-07-06 10:38:39,175 [test_rss] -------------------------------------
+2026-07-06 10:38:39,175 [test_rss] Test source : chequeado (https://chequeado.com/feed/)
+2026-07-06 10:38:39,175 [rss]   ┌[FeedparserAdapter]................: [est_disponible] -------------------- [https://chequeado.com/feed/]
+2026-07-06 10:38:39,588 [rss]           statut HTTP.................: 200
+2026-07-06 10:38:39,588 [rss]   └[FeedparserAdapter]................: [est_disponible] -------------------- [OK]
+2026-07-06 10:38:39,590 [rss] ######################################
+2026-07-06 10:38:39,590 [rss]  ┌[FeedparserAdapter].................: [extraire_données] ------------------ [https://chequeado.com/feed/]
+2026-07-06 10:38:40,030 [rss]           entrées trouvées............: 50
+2026-07-06 10:38:40,030 [rss]           source......................: Chequeado RSS
+2026-07-06 10:38:40,200 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:40,200 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:40,353 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:40,501 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:40,654 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:40,654 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:40,868 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:41,087 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:41,288 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:41,489 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:41,718 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:41,718 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:41,924 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:42,148 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:42,354 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:42,576 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:42,796 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:43,012 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:43,213 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:43,428 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:43,644 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:43,847 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:44,076 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:44,279 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:44,494 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:44,691 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:44,912 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:45,116 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:45,352 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:45,570 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:45,827 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:45,828 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:46,056 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:46,269 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:46,516 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:46,735 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:46,963 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:47,236 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:47,525 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:47,772 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:47,989 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:48,240 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:48,610 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:48,893 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:49,208 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:49,208 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:50,459 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:50,697 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:50,900 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:51,131 [rss] [WARNING  ] FeedparserAdapter Label non normalisable : 'aucun mot-clé' (source : chequeado.com)
+2026-07-06 10:38:51,131 [rss]           publications valides........: 0
+2026-07-06 10:38:51,131 [rss]           entrées rejetées............: 50
+2026-07-06 10:38:51,131 [rss]           taux d'intégrité............: 0.0%
+2026-07-06 10:38:51,132 [rss]  └[FeedparserAdapter].................: [extraire_données] ------------------ [0 publications extraites Exec: 00:00:11.541272]
+2026-07-06 10:38:51,132 [rss] **************************************
+2026-07-06 10:38:51,132 [test_rss]           chequeado — total...........: 0
+2026-07-06 10:38:51,132 [test_rss]           chequeado — REAL............: 0
+2026-07-06 10:38:51,132 [test_rss]           chequeado — FAKE............: 0
+2026-07-06 10:38:51,158 [test_rss]           fichier sauvegardé..........: /mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr/data/raw/test_rss_2026-07-06_10-38.json
+2026-07-06 10:38:51,158 [test_rss]           total publications..........: 146
+2026-07-06 10:38:51,158 [test_rss] -------------------------------------
+2026-07-06 10:38:51,158 [test_rss] RAPPORT FINAL
+2026-07-06 10:38:51,159 [test_rss]           afp_bluesky.................: OK — total:5 REAL:0 FAKE:5
+2026-07-06 10:38:51,159 [test_rss]           euvsdisinfo.................: OK — total:0 REAL:0 FAKE:0
+2026-07-06 10:38:51,159 [test_rss]           hoaxbuster..................: HORS LIGNE — total:0 REAL:0 FAKE:0
+2026-07-06 10:38:51,159 [test_rss]           elpais......................: OK — total:141 REAL:141 FAKE:0
+2026-07-06 10:38:51,159 [test_rss]           politifact..................: OK — total:0 REAL:0 FAKE:0
+2026-07-06 10:38:51,159 [test_rss]           decodeurs...................: OK — total:0 REAL:0 FAKE:0
+2026-07-06 10:38:51,159 [test_rss]           chequeado...................: OK — total:0 REAL:0 FAKE:0
+2026-07-06 10:38:51,159 [test_rss]  └[test_feedparser]...................: [main] ------------------------------ [146 publications extraites Exec: 00:01:45.433247]
+2026-07-06 10:38:51,160 [test_rss] **************************************
+2026-07-06 10:38:53,609 [test_api] ######################################
+2026-07-06 10:38:53,610 [test_api]  ┌[test_requests].....................: [main] ------------------------------ [début des tests API REST]
+2026-07-06 10:38:53,610 [test_api]           clé API NewsData............: pub_3e90...96db
+2026-07-06 10:38:53,610 [test_api]           disponibilité NewsData......: test en cours
+2026-07-06 10:38:53,610 [api_rest]   ┌[RequestsAdapter]..................: [est_disponible] -------------------- [https://newsdata.io/api/1/news?apikey=pub_3e90187edea14f59be4a13dc34ff96db&size=1]
+2026-07-06 10:38:54,206 [api_rest]           statut HTTP.................: 200
+2026-07-06 10:38:54,206 [api_rest]   └[RequestsAdapter]..................: [est_disponible] -------------------- [OK]
+2026-07-06 10:38:54,206 [test_api]           disponibilité NewsData......: ✅ API en ligne
+2026-07-06 10:38:54,206 [test_api] -------------------------------------
+2026-07-06 10:38:54,207 [test_api] Extraction NewsData : articles politiques français
+2026-07-06 10:38:54,207 [api_rest] ######################################
+2026-07-06 10:38:54,207 [api_rest]  ┌[RequestsAdapter]...................: [extraire_données] ------------------ [https://newsdata.io/api/1/news?apikey=pub_3e90187edea14f59be4a13dc34ff96db&country=fr&language=fr&category=politics&size=10]
+2026-07-06 10:38:54,385 [api_rest]           articles reçus..............: 10
+2026-07-06 10:38:54,885 [api_rest] [INFO     ] RequestsAdapter [FAKE] Royaume-Uni: le populiste Nigel Farage accusé d'avoir béne
+2026-07-06 10:38:55,385 [api_rest] [INFO     ] RequestsAdapter [FAKE] Je vous en prie, appelez-moi Édouard [L’éditorial de CL]
+2026-07-06 10:38:55,886 [api_rest] [INFO     ] RequestsAdapter [FAKE] « Depuis le 7 octobre, tout devient politique, même quand i
+2026-07-06 10:38:56,386 [api_rest] [INFO     ] RequestsAdapter [FAKE] Emmanuel Macron attendu en Syrie en fin de semaine, la premi
+2026-07-06 10:38:56,887 [api_rest] [INFO     ] RequestsAdapter [FAKE] Netanyahou affirme que des villages chrétiens libanais aura
+2026-07-06 10:38:57,387 [api_rest] [INFO     ] RequestsAdapter [FAKE] « Le Gaulois est fermé ! » : Eric Ciotti annonce la fermetu
+2026-07-06 10:38:59,392 [api_rest] [INFO     ] RequestsAdapter [FAKE] LIGNE ROUGE - Marine Le Pen: un destin en suspens
+2026-07-06 10:38:59,893 [api_rest] [INFO     ] RequestsAdapter [FAKE] Bavilliers. Top départ pour les Vendredisμ de la Douce le 1
+2026-07-06 10:39:00,393 [api_rest] [INFO     ] RequestsAdapter [FAKE] Gaza : le Hamas aurait accepté de dissoudre son appareil go
+2026-07-06 10:39:00,393 [api_rest]           publications valides........: 9
+2026-07-06 10:39:00,393 [api_rest]           entrées rejetées............: 1
+2026-07-06 10:39:00,393 [api_rest]  └[RequestsAdapter]...................: [extraire_données] ------------------ [9 publications extraites Exec: 00:00:05.182248]
+2026-07-06 10:39:00,394 [api_rest] **************************************
+2026-07-06 10:39:00,394 [test_api]           articles politiques (ND)....: 9
+2026-07-06 10:39:00,394 [test_api] -------------------------------------
+2026-07-06 10:39:00,394 [test_api] Extraction NewsData : articles santé
+2026-07-06 10:39:00,394 [api_rest] ######################################
+2026-07-06 10:39:00,394 [api_rest]  ┌[RequestsAdapter]...................: [extraire_données] ------------------ [https://newsdata.io/api/1/news?apikey=pub_3e90187edea14f59be4a13dc34ff96db&language=fr&q=vaccin+santé&size=10]
+2026-07-06 10:39:00,943 [api_rest]           articles reçus..............: 0
+2026-07-06 10:39:00,943 [api_rest]           publications valides........: 0
+2026-07-06 10:39:00,943 [api_rest]           entrées rejetées............: 0
+2026-07-06 10:39:00,943 [api_rest]  └[RequestsAdapter]...................: [extraire_données] ------------------ [0 publications extraites Exec: 00:00:00.549161]
+2026-07-06 10:39:00,944 [api_rest] **************************************
+2026-07-06 10:39:00,944 [test_api]           articles santé (ND).........: 0
+2026-07-06 10:39:00,944 [test_api]           clé API Mediastack..........: b5a3ce37...75bb
+2026-07-06 10:39:00,944 [test_api]           disponibilité Mediastack....: test en cours
+2026-07-06 10:39:00,944 [api_rest]   ┌[RequestsAdapter]..................: [est_disponible] -------------------- [http://api.mediastack.com/v1/news?access_key=b5a3ce37f93f1b47259578bdcdde75bb&limit=1]
+2026-07-06 10:39:01,171 [api_rest]           statut HTTP.................: 200
+2026-07-06 10:39:01,171 [api_rest]   └[RequestsAdapter]..................: [est_disponible] -------------------- [OK]
+2026-07-06 10:39:01,172 [test_api]           disponibilité Mediastack....: ✅ API en ligne
+2026-07-06 10:39:01,172 [test_api] -------------------------------------
+2026-07-06 10:39:01,172 [test_api] Extraction Mediastack : articles politiques français
+2026-07-06 10:39:01,172 [api_rest] ######################################
+2026-07-06 10:39:01,172 [api_rest]  ┌[RequestsAdapter]...................: [extraire_données] ------------------ [http://api.mediastack.com/v1/news?access_key=b5a3ce37f93f1b47259578bdcdde75bb&countries=fr&languages=fr&categories=politics&limit=10]
+2026-07-06 10:39:01,591 [api_rest]           articles reçus..............: 0
+2026-07-06 10:39:01,591 [api_rest]           publications valides........: 0
+2026-07-06 10:39:01,591 [api_rest]           entrées rejetées............: 0
+2026-07-06 10:39:01,591 [api_rest]  └[RequestsAdapter]...................: [extraire_données] ------------------ [0 publications extraites Exec: 00:00:00.419591]
+2026-07-06 10:39:01,592 [api_rest] **************************************
+2026-07-06 10:39:01,592 [test_api]           articles politiques (MS)....: 0
+2026-07-06 10:39:01,592 [test_api] -------------------------------------
+2026-07-06 10:39:01,592 [test_api] Extraction Mediastack : articles santé
+2026-07-06 10:39:01,592 [api_rest] ######################################
+2026-07-06 10:39:01,592 [api_rest]  ┌[RequestsAdapter]...................: [extraire_données] ------------------ [http://api.mediastack.com/v1/news?access_key=b5a3ce37f93f1b47259578bdcdde75bb&languages=fr&keywords=vaccin+santé&limit=10]
+2026-07-06 10:39:01,713 [api_rest] [ERROR    ] RequestsAdapter Erreur HTTP 429 Client Error: Too Many Requests for url: http://api.mediastack.com/v1/news?access_key=b5a3ce37f93f1b47259578bdcdde75bb&languages=fr&keywords=vaccin+sant%C3%A9&limit=10
+2026-07-06 10:39:01,713 [test_api]           articles santé (MS).........: 0
+2026-07-06 10:39:01,713 [test_api] -------------------------------------
+2026-07-06 10:39:01,714 [test_api] Test ClaimBuster (scoring affirmations)
+2026-07-06 10:39:02,653 [api_rest] [WARNING  ] RequestsAdapter ClaimBuster indisponible : 404 Client Error: Not Found for url: https://idir.uta.edu/claimbuster/api/v2/score/text
+2026-07-06 10:39:02,653 [test_api]           texte test..................: Le gouvernement affirme que 95% des hospitalisations concern
+2026-07-06 10:39:02,653 [test_api]           score ClaimBuster...........: 0.000
+2026-07-06 10:39:02,653 [test_api]           interprétation..............: opinion/non vérifiable
+2026-07-06 10:39:02,653 [test_api] -------------------------------------
+2026-07-06 10:39:02,653 [test_api] Exemples extraits
+2026-07-06 10:39:02,653 [test_api]           [1] titre...................: Royaume-Uni: le populiste Nigel Farage accusé d'avoir béne
+2026-07-06 10:39:02,653 [test_api]           [1] label...................: FAKE
+2026-07-06 10:39:02,654 [test_api]           [1] source..................: rfi_fr
+2026-07-06 10:39:02,654 [test_api]           [2] titre...................: Je vous en prie, appelez-moi Édouard [L’éditorial de CL]
+2026-07-06 10:39:02,654 [test_api]           [2] label...................: FAKE
+2026-07-06 10:39:02,654 [test_api]           [2] source..................: charentelibre_fr
+2026-07-06 10:39:02,654 [test_api]           [3] titre...................: « Depuis le 7 octobre, tout devient politique, même quand i
+2026-07-06 10:39:02,654 [test_api]           [3] label...................: FAKE
+2026-07-06 10:39:02,654 [test_api]           [3] source..................: i24news_tv
+2026-07-06 10:39:02,663 [test_api]           fichier sauvegardé..........: /mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr/data/raw/test_api_2026-07-06_10-39.json
+2026-07-06 10:39:02,663 [test_api]           total publications..........: 9
+2026-07-06 10:39:02,663 [test_api]  └[test_requests].....................: [main] ------------------------------ [9 publications extraites Exec: 00:00:08.049245]
+2026-07-06 10:39:02,663 [test_api] **************************************
+2026-07-06 10:39:06,298 [test_bs4] ######################################
+2026-07-06 10:39:06,298 [test_bs4]  ┌[test_bs4]..........................: [main] ------------------------------ [début des tests BeautifulSoup4]
+2026-07-06 10:39:06,298 [test_bs4] -------------------------------------
+2026-07-06 10:39:06,298 [test_bs4] Test source : fullfact (https://fullfact.org/latest/)
+2026-07-06 10:39:06,299 [bs4]   ┌[Bs4Adapter].......................: [est_disponible] -------------------- [https://fullfact.org/latest/]
+2026-07-06 10:39:06,644 [bs4]           statut HTTP.................: 200
+2026-07-06 10:39:06,644 [bs4]   └[Bs4Adapter].......................: [est_disponible] -------------------- [OK]
+2026-07-06 10:39:06,644 [test_bs4]           disponibilité...............: ✅ en ligne
+2026-07-06 10:39:06,644 [test_bs4]           langue......................: en
+2026-07-06 10:39:06,645 [test_bs4]           domaine.....................: fullfact.org
+2026-07-06 10:39:06,645 [bs4] ######################################
+2026-07-06 10:39:06,645 [bs4]  ┌[Bs4Adapter]........................: [extraire_données] ------------------ [https://fullfact.org/latest/]
+2026-07-06 10:39:06,847 [bs4]           articles trouvés............: 11
+2026-07-06 10:39:08,852 [bs4] [INFO     ] Bs4Adapter [FAKE] What progress has Keir Starmer made on Labour’s ‘first steps
+2026-07-06 10:39:10,853 [bs4] [INFO     ] Bs4Adapter [FAKE] The data on Mexico’s World Cup home advantage - and why Engl
+2026-07-06 10:39:12,855 [bs4] [INFO     ] Bs4Adapter [FAKE] Twin Venezuelan earthquakes not caused by HAARP
+2026-07-06 10:39:14,857 [bs4] [INFO     ] Bs4Adapter [FAKE] Videos don’t show traffic lights ‘melting’ due to heatwave
+2026-07-06 10:39:16,859 [bs4] [INFO     ] Bs4Adapter [FAKE] False claim cancer is ‘trying to heal’ shared again online
+2026-07-06 10:39:18,861 [bs4] [INFO     ] Bs4Adapter [FAKE] No evidence viral picture of ‘migrant lorry’ stopping on M62
+2026-07-06 10:39:20,862 [bs4] [INFO     ] Bs4Adapter [FAKE] Photo of Andy Burnham edited to include several women wearin
+2026-07-06 10:39:22,863 [bs4] [INFO     ] Bs4Adapter [FAKE] Defence spending not set to increase by an ‘extra’ £270 bill
+2026-07-06 10:39:24,865 [bs4] [INFO     ] Bs4Adapter [FAKE] No, sunscreen doesn’t cause skin cancer
+2026-07-06 10:39:28,866 [bs4] [INFO     ] Bs4Adapter [FAKE] Videos of people giving their views on immigration are AI fa
+2026-07-06 10:39:28,866 [bs4]           publications valides........: 10
+2026-07-06 10:39:28,866 [bs4]           entrées rejetées............: 1
+2026-07-06 10:39:28,866 [bs4]  └[Bs4Adapter]........................: [extraire_données] ------------------ [10 publications extraites Exec: 00:00:22.221385]
+2026-07-06 10:39:28,866 [bs4] **************************************
+2026-07-06 10:39:28,866 [test_bs4]  ------------------------------------
+2026-07-06 10:39:28,866 [test_bs4]  Exemple extrait
+2026-07-06 10:39:28,866 [test_bs4]           titre.......................: What progress has Keir Starmer made on Labour’s ‘first steps
+2026-07-06 10:39:28,867 [test_bs4]           label.......................: FAKE
+2026-07-06 10:39:28,867 [test_bs4]           langue......................: en
+2026-07-06 10:39:28,867 [test_bs4]           image.......................: https://fullfact.org/media/images/55355406790_89393ec9bc_b.w
+2026-07-06 10:39:28,867 [test_bs4]           valide......................: True
+2026-07-06 10:39:28,867 [test_bs4]           distribution................: REAL:0 FAKE:10
+2026-07-06 10:39:28,867 [test_bs4] -------------------------------------
+2026-07-06 10:39:28,867 [test_bs4] Test source : correctiv (https://correctiv.org/faktencheck/)
+2026-07-06 10:39:28,869 [bs4]   ┌[Bs4Adapter].......................: [est_disponible] -------------------- [https://correctiv.org/faktencheck/]
+2026-07-06 10:39:29,129 [bs4]           statut HTTP.................: 200
+2026-07-06 10:39:29,129 [bs4]   └[Bs4Adapter].......................: [est_disponible] -------------------- [OK]
+2026-07-06 10:39:29,129 [test_bs4]           disponibilité...............: ✅ en ligne
+2026-07-06 10:39:29,129 [test_bs4]           langue......................: de
+2026-07-06 10:39:29,129 [test_bs4]           domaine.....................: correctiv.org
+2026-07-06 10:39:29,129 [bs4] ######################################
+2026-07-06 10:39:29,129 [bs4]  ┌[Bs4Adapter]........................: [extraire_données] ------------------ [https://correctiv.org/faktencheck/]
+2026-07-06 10:39:29,633 [bs4]           articles trouvés............: 41
+2026-07-06 10:39:32,583 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/07/03/nein-annalena-baerbock-wurde-nicht-aus-der-un-geworfen/]
+2026-07-06 10:39:32,923 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:32,923 [bs4] [INFO     ] Bs4Adapter [FAKE] Nein, Annalena Baerbock wurde nicht „aus der UN geworfen“
+2026-07-06 10:39:34,924 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/06/30/kuenstliche-intelligenz-ki-whatsapp-warum-dieser-kettenbrief-so-nicht-stimmt/]
+2026-07-06 10:39:35,238 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:35,239 [bs4] [INFO     ] Bs4Adapter [FAKE] Hat die Whatsapp-KI „ab Samstag“ Zugriff auf private Chats?
+2026-07-06 10:39:37,239 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/06/30/schule-in-nrw-leiterin-dementiert-angebliches-deutschlandflaggen-verbot/]
+2026-07-06 10:39:37,497 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:37,497 [bs4] [INFO     ] Bs4Adapter [FAKE] Schule in NRW: Leiterin dementiert angebliches Deutschlandfl
+2026-07-06 10:39:39,497 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/06/30/geruechtekiller-schlaeft-man-bei-vollmond-schlechter/]
+2026-07-06 10:39:39,833 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:39,833 [bs4] [INFO     ] Bs4Adapter [FAKE] Gerüchtekiller #12: Schläft man bei Vollmond schlechter?
+2026-07-06 10:39:41,833 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/hintergrund/2026/06/30/deutschlandfahne-verboten-beitraegen-zu-viralem-video-fehlt-kontext/]
+2026-07-06 10:39:42,153 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:42,154 [bs4] [INFO     ] Bs4Adapter [FAKE] Deutschlandfahne verboten? Beiträgen zu viralem Video fehlt
+2026-07-06 10:39:44,154 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/06/29/hitzedarstellung-im-tv-video-zu-wetterkarten-ist-nicht-echt/]
+2026-07-06 10:39:44,450 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:44,451 [bs4] [INFO     ] Bs4Adapter [FAKE] Hitzedarstellung im TV: Video zu Wetterkarten ist nicht echt
+2026-07-06 10:39:46,451 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/06/29/altes-afd-video-zur-cdu-und-muslim-interaktiv-geht-erneut-viral/]
+2026-07-06 10:39:46,744 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:46,744 [bs4] [INFO     ] Bs4Adapter [FAKE] Altes AfD-Video zur CDU und „Muslim Interaktiv“ geht erneut
+2026-07-06 10:39:48,744 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/06/29/video-von-kind-das-regenbogenflagge-in-den-muell-wirft-ist-ki-generiert/]
+2026-07-06 10:39:49,161 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:49,162 [bs4] [INFO     ] Bs4Adapter [FAKE] Video von Kind, das Regenbogenflagge in den Müll wirft, ist
+2026-07-06 10:39:51,162 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/hintergrund/2026/06/24/warum-die-polizei-das-trommeln-auf-einer-anti-merz-demo-einschraenkte/]
+2026-07-06 10:39:51,476 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:51,476 [bs4] [INFO     ] Bs4Adapter [FAKE] Warum die Polizei das Trommeln auf einer Anti-Merz-Demo eins
+2026-07-06 10:39:53,477 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/hintergrund/2026/06/12/weshalb-eine-deutschlandfahne-die-bundestagspolizei-auf-den-plan-rief/]
+2026-07-06 10:39:53,696 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:53,697 [bs4] [INFO     ] Bs4Adapter [FAKE] Weshalb eine Deutschlandfahne die Bundestagspolizei auf den
+2026-07-06 10:39:55,697 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/hybride-kriegsfuehrung/2026/06/04/ein-leak-enthuellt-wie-kreml-geheimdienst-und-private-firmen-zusammenarbeiten/]
+2026-07-06 10:39:56,004 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:56,005 [bs4] [INFO     ] Bs4Adapter [FAKE] Ein Leak enthüllt, wie Kreml, Geheimdienst und private Firme
+2026-07-06 10:39:58,005 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/06/17/angebliche-neue-anti-islam-gesetze-in-japan-gibt-es-nicht/]
+2026-07-06 10:39:58,310 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:39:58,311 [bs4] [INFO     ] Bs4Adapter [FAKE] Angebliche neue Anti-Islam-Gesetze in Japan gibt es nicht
+2026-07-06 10:40:00,311 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/05/29/ki-stimme-von-friedrich-merz-verkuendet-erfundene-mindestlohn-kuerzung-auf-tiktok/]
+2026-07-06 10:40:00,605 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:00,605 [bs4] [INFO     ] Bs4Adapter [FAKE] KI-Stimme von Friedrich Merz verkündet erfundene Mindestlohn
+2026-07-06 10:40:02,605 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/06/16/video-ueber-angeblich-geplante-impfpflicht-in-der-schweiz-fuehrt-in-die-irre/]
+2026-07-06 10:40:02,866 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:02,866 [bs4] [INFO     ] Bs4Adapter [FAKE] Video über angeblich geplante Impfpflicht in der Schweiz füh
+2026-07-06 10:40:05,830 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/05/22/kein-hantavirus-einsatz-foto-zeigt-marineuebung-im-jahr-2025/]
+2026-07-06 10:40:06,123 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:06,123 [bs4] [INFO     ] Bs4Adapter [FAKE] Kein Hantavirus-Einsatz: Foto zeigt Marineübung im Jahr 2025
+2026-07-06 10:40:08,124 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/05/22/foto-von-busfahrer-ohne-maske-hat-keinen-bezug-zu-hantavirus/]
+2026-07-06 10:40:08,442 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:08,442 [bs4] [INFO     ] Bs4Adapter [FAKE] Foto von Busfahrer ohne Maske hat keinen Bezug zu Hantavirus
+2026-07-06 10:40:10,442 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/05/20/nein-diese-karte-zeigt-keine-hantavirus-faelle/]
+2026-07-06 10:40:10,735 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:10,735 [bs4] [INFO     ] Bs4Adapter [FAKE] Nein, diese Karte zeigt keine Hantavirus-Fälle
+2026-07-06 10:40:12,735 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/03/27/iran-krieg-fake-satellitenbild-stellt-braende-von-oel-anlagen-in-golfstaaten-falsch-dar/]
+2026-07-06 10:40:13,059 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:13,060 [bs4] [INFO     ] Bs4Adapter [FAKE] Iran-Krieg: Fake-Satellitenbild stellt Brände von Öl-Anlagen
+2026-07-06 10:40:15,060 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/03/12/explosion-im-livestream-video-zeigt-keinen-angriff-des-iran/]
+2026-07-06 10:40:15,338 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:15,339 [bs4] [INFO     ] Bs4Adapter [FAKE] Explosion im Livestream: Video zeigt keinen Angriff des Iran
+2026-07-06 10:40:17,339 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://correctiv.org/faktencheck/2026/03/11/kampfjet-abschuss-in-kuwait-szene-aus-videospiel-als-echt-ausgegeben/]
+2026-07-06 10:40:17,669 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:17,669 [bs4] [INFO     ] Bs4Adapter [FAKE] Kampfjet-Abschuss in Kuwait: Szene aus Videospiel als echt a
+2026-07-06 10:40:17,670 [bs4]           publications valides........: 20
+2026-07-06 10:40:17,670 [bs4]           entrées rejetées............: 0
+2026-07-06 10:40:17,670 [bs4]  └[Bs4Adapter]........................: [extraire_données] ------------------ [20 publications extraites Exec: 00:00:46.627938]
+2026-07-06 10:40:17,670 [bs4] **************************************
+2026-07-06 10:40:17,670 [test_bs4]  ------------------------------------
+2026-07-06 10:40:17,670 [test_bs4]  Exemple extrait
+2026-07-06 10:40:17,670 [test_bs4]           titre.......................: Nein, Annalena Baerbock wurde nicht „aus der UN geworfen“
+2026-07-06 10:40:17,670 [test_bs4]           label.......................: FAKE
+2026-07-06 10:40:17,670 [test_bs4]           langue......................: de
+2026-07-06 10:40:17,670 [test_bs4]           image.......................: https://correctiv.org/wp-content/uploads/2026/06/20260629-br
+2026-07-06 10:40:17,670 [test_bs4]           valide......................: True
+2026-07-06 10:40:17,671 [test_bs4]           distribution................: REAL:0 FAKE:20
+2026-07-06 10:40:17,671 [test_bs4] -------------------------------------
+2026-07-06 10:40:17,671 [test_bs4] Test source : maldita (https://maldita.es/malditobulo/)
+2026-07-06 10:40:17,673 [bs4]   ┌[Bs4Adapter].......................: [est_disponible] -------------------- [https://maldita.es/malditobulo/]
+2026-07-06 10:40:18,634 [bs4]           statut HTTP.................: 200
+2026-07-06 10:40:18,634 [bs4]   └[Bs4Adapter].......................: [est_disponible] -------------------- [OK]
+2026-07-06 10:40:18,635 [test_bs4]           disponibilité...............: ✅ en ligne
+2026-07-06 10:40:18,635 [test_bs4]           langue......................: es
+2026-07-06 10:40:18,635 [test_bs4]           domaine.....................: maldita.es
+2026-07-06 10:40:18,635 [bs4] ######################################
+2026-07-06 10:40:18,635 [bs4]  ┌[Bs4Adapter]........................: [extraire_données] ------------------ [https://maldita.es/malditobulo/]
+2026-07-06 10:40:19,354 [bs4]           articles trouvés............: 18
+2026-07-06 10:40:21,354 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260703/pillados-con-cuentas-en-paraisos-fiscales-10-de-los-16-magistrados-de-su-sala-de-lo-penal/]
+2026-07-06 10:40:22,766 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:22,766 [bs4] [INFO     ] Bs4Adapter [FAKE] No hay constancia de que hayan pillado a nueve fiscales con
+2026-07-06 10:40:24,766 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260703/es-falso-que-la-ia-de-meta-pueda-acceder-a-todos-tus-mensajes-de-whatsapp-si-no-activas-la-privacidad-avanzada-solo-puede-leer-aquellos-en-los-que-se-la-menciona-o-los-que-se-comparten-con-ella/]
+2026-07-06 10:40:26,296 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:26,296 [bs4] [INFO     ] Bs4Adapter [FAKE] Es falso que la IA de Meta pueda acceder a "todos" tus mensa
+2026-07-06 10:40:28,296 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260701/el-gobierno-consuma-una-nacionalizacion-masiva-de-extranjeros-por-la-ley-de-memoria-para-que-mas-de-500000-puedan-votar-en-las-elecciones/]
+2026-07-06 10:40:29,648 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:29,648 [bs4] [INFO     ] Bs4Adapter [FAKE] Qué sabemos de la nacionalización de "más de 500.000 extranj
+2026-07-06 10:40:31,648 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260629/video-inmigrantes-mujer-autobus/]
+2026-07-06 10:40:32,960 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:32,961 [bs4] [INFO     ] Bs4Adapter [FAKE] No, este vídeo no muestra a dos hombres inmigrantes empujand
+2026-07-06 10:40:34,961 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260626/datos-violaciones-musulmanes-menores-reino-unido/]
+2026-07-06 10:40:36,431 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:36,431 [bs4] [INFO     ] Bs4Adapter [FAKE] Las redes de explotación sexual infantil en Reino Unido: pre
+2026-07-06 10:40:39,395 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260625/parlamento-europeo-dictamen-pensiones-irpf/]
+2026-07-06 10:40:41,174 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:41,174 [bs4] [INFO     ] Bs4Adapter [FAKE] No, el Parlamento Europeo no ha dictaminado que las pensione
+2026-07-06 10:40:43,174 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260624/papel-starmer-investigacion-delitos-sexuales-musulmanes/]
+2026-07-06 10:40:44,727 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:44,728 [bs4] [INFO     ] Bs4Adapter [FAKE] Qué sabemos del papel de Keir Starmer, exprimer ministro bri
+2026-07-06 10:40:46,728 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260624/no-perez-reverte-no-ha-escrito-el-texto-indecentes/]
+2026-07-06 10:40:47,933 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:47,933 [bs4] [INFO     ] Bs4Adapter [FAKE] No, Pérez-Reverte no ha escrito el texto "¡Indecentes!"
+2026-07-06 10:40:49,933 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260624/florentino-perez-aficion-real-madrid-subnormales-audio/]
+2026-07-06 10:40:51,402 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:51,403 [bs4] [INFO     ] Bs4Adapter [FAKE] No, El Confidencial no publicó un audio de Florentino Pérez
+2026-07-06 10:40:53,403 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260624/desayuno-yolanda-diaz-trabajo/]
+2026-07-06 10:40:54,687 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:54,687 [bs4] [INFO     ] Bs4Adapter [FAKE] No, Yolanda Díaz no "ha cargado 68.000 euros en desayunos" a
+2026-07-06 10:40:56,687 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260624/imagen-muestra-a-isabel-diaz-ayuso-y-su-novio-en-el-atico-de-su-casa-y-en-el-fondo-un-toldo-de-quironsalud/]
+2026-07-06 10:40:58,024 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:40:58,024 [bs4] [INFO     ] Bs4Adapter [FAKE] No, esta imagen no muestra a Ayuso y su novio en el ático de
+2026-07-06 10:41:00,025 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260623/el-bulo-del-magrebi-que-recibe-1800e-con-la-ayuda-pirmi/]
+2026-07-06 10:41:01,464 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:41:01,465 [bs4] [INFO     ] Bs4Adapter [FAKE] El bulo del "magrebí" que recibe 1.800 euros al mes con la a
+2026-07-06 10:41:03,465 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260619/nina-reino-unido-carne-kebab-musulmanes/]
+2026-07-06 10:41:04,863 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:41:04,864 [bs4] [INFO     ] Bs4Adapter [FAKE] Qué sabemos sobre la desaparición de Charlene Downes, su rel
+2026-07-06 10:41:06,864 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260619/evidencia-vacuna-vph-efectiva-segura/]
+2026-07-06 10:41:08,185 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:41:08,185 [bs4] [INFO     ] Bs4Adapter [FAKE] Cómo la evidencia científica disponible demuestra que la vac
+2026-07-06 10:41:10,185 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260619/musulmanes-marruecos-80-ayudas-sociales/]
+2026-07-06 10:41:12,643 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:41:12,643 [bs4] [INFO     ] Bs4Adapter [FAKE] Las desinformaciones que dicen que los "musulmanes procedent
+2026-07-06 10:41:14,644 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260618/recaudacion-ecovidrio-dia-mundial-ela/]
+2026-07-06 10:41:15,934 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:41:15,934 [bs4] [INFO     ] Bs4Adapter [FAKE] Qué sabemos del vídeo de Ecovidrio sobre el Día Mundial de l
+2026-07-06 10:41:17,934 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260618/se-hacen-pasar-por-empleados-del-instituto-nacional-de-estadistica-y-censos-para-robar-fotos-y-huellas-digitales/]
+2026-07-06 10:41:19,921 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:41:19,921 [bs4] [INFO     ] Bs4Adapter [FAKE] Cuidado con los mensajes que alertan de que se hacen pasar p
+2026-07-06 10:41:21,922 [bs4]    ┌[Bs4Adapter]......................: [_extraire_article] ----------------- [https://maldita.es/malditobulo/20260617/que-sabemos-sobre-la-afirmacion-de-que-el-pp-acapara-el-86-del-coste-de-la-corrupcion-en-espana/]
+2026-07-06 10:41:23,362 [bs4]    └[Bs4Adapter]......................: [_extraire_article] ----------------- [OK]
+2026-07-06 10:41:23,362 [bs4] [INFO     ] Bs4Adapter [FAKE] Qué sabemos sobre la afirmación de que el PP acapara el 86%
+2026-07-06 10:41:23,362 [bs4]           publications valides........: 18
+2026-07-06 10:41:23,362 [bs4]           entrées rejetées............: 0
+2026-07-06 10:41:23,362 [bs4]  └[Bs4Adapter]........................: [extraire_données] ------------------ [18 publications extraites Exec: 00:01:02.797450]
+2026-07-06 10:41:23,362 [bs4] **************************************
+2026-07-06 10:41:23,363 [test_bs4]  ------------------------------------
+2026-07-06 10:41:23,363 [test_bs4]  Exemple extrait
+2026-07-06 10:41:23,363 [test_bs4]           titre.......................: No hay constancia de que hayan pillado a nueve fiscales con
+2026-07-06 10:41:23,363 [test_bs4]           label.......................: FAKE
+2026-07-06 10:41:23,363 [test_bs4]           langue......................: es
+2026-07-06 10:41:23,363 [test_bs4]           image.......................: https://files.maldita.es/maldita/uploads/images/2026/04/69d5
+2026-07-06 10:41:23,363 [test_bs4]           valide......................: True
+2026-07-06 10:41:23,363 [test_bs4]           distribution................: REAL:0 FAKE:18
+2026-07-06 10:41:23,384 [test_bs4]           fichier sauvegardé..........: /mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr/data/raw/test_bs4_2026-07-06_10-41.json
+2026-07-06 10:41:23,384 [test_bs4] -------------------------------------
+2026-07-06 10:41:23,384 [test_bs4] RAPPORT FINAL BS4
+2026-07-06 10:41:23,385 [test_bs4]           fullfact....................: OK — 10 publications [en]
+2026-07-06 10:41:23,385 [test_bs4]           correctiv...................: OK — 20 publications [de]
+2026-07-06 10:41:23,385 [test_bs4]           maldita.....................: OK — 18 publications [es]
+2026-07-06 10:41:23,385 [test_bs4]           total publications..........: 48
+2026-07-06 10:41:23,385 [test_bs4]  └[test_bs4]..........................: [main] ------------------------------ [48 publications extraites Exec: 00:02:13.244644]
+2026-07-06 10:41:23,385 [test_bs4] **************************************
+2026-07-06 10:41:33,530 [test_scrapy] ######################################
+2026-07-06 10:41:33,530 [test_scrapy]  ┌[test_scrapy].......................: [main] ------------------------------ [début du test Scrapy]
+2026-07-06 10:41:33,530 [test_scrapy] -------------------------------------
+2026-07-06 10:41:33,530 [test_scrapy] Vérification disponibilité (https://www.politifact.com/factchecks/)
+2026-07-06 10:41:33,530 [test_scrapy]           disponibilité...............: test en cours
+2026-07-06 10:41:34,881 [test_scrapy]           disponibilité...............: ✅ en ligne
+2026-07-06 10:41:34,881 [test_scrapy]           nom_source..................: PolitiFact (Scrapy)
+2026-07-06 10:41:34,881 [test_scrapy] -------------------------------------
+2026-07-06 10:41:34,881 [test_scrapy] Lancement du crawl Scrapy (ceci peut prendre 30-90s)
+2026-07-06 10:41:34,881 [scrapy] ######################################
+2026-07-06 10:41:34,882 [scrapy]  ┌[ScrapyAdapter].....................: [extraire_données] ------------------ [https://www.politifact.com/factchecks/]
+2026-07-06 10:41:38,552 [scrapy]           résultats bruts.............: 0
+2026-07-06 10:41:38,552 [scrapy]           publications valides........: 0
+2026-07-06 10:41:38,552 [scrapy]           entrées rejetées............: 0
+2026-07-06 10:41:38,552 [scrapy]  └[ScrapyAdapter].....................: [extraire_données] ------------------ [0 publications extraites Exec: 00:00:03.670930]
+2026-07-06 10:41:38,552 [scrapy] **************************************
+2026-07-06 10:41:38,552 [test_scrapy]           durée du crawl..............: 3.7s
+2026-07-06 10:41:38,552 [test_scrapy] -------------------------------------
+2026-07-06 10:41:38,552 [test_scrapy] Statistiques d'extraction
+2026-07-06 10:41:38,553 [test_scrapy]           publications valides........: 0
+2026-07-06 10:41:38,553 [test_scrapy] [WARNING  ] test_scrapy Aucune publication extraite — vérifier les sélecteurs CSS (PolitiFact peut avoir changé sa structure HTML)
+2026-07-06 10:41:38,553 [test_scrapy]  └[test_scrapy].......................: [main] ------------------------------ [0 publications — voir avertissement Exec: 00:00:05.022618]
+2026-07-06 10:41:38,553 [test_scrapy] **************************************
+2026-07-06 10:41:42,594 [test_selenium] ######################################
+2026-07-06 10:41:42,594 [test_selenium]  ┌[test_selenium].....................: [main] ------------------------------ [début des tests Selenium]
+2026-07-06 10:41:42,594 [test_selenium] [NOTICE   ] test_selenium Chrome headless requis — premier lancement peut être lent (téléchargement ChromeDriver)
+2026-07-06 10:41:42,594 [test_selenium] -------------------------------------
+2026-07-06 10:41:42,594 [test_selenium] Test source : africacheck (https://africacheck.org/fact-checks)
+2026-07-06 10:41:42,594 [test_selenium]           disponibilité...............: test en cours
+2026-07-06 10:41:42,853 [test_selenium] [WARNING  ] test_selenium Site africacheck inaccessible — ignoré
+2026-07-06 10:41:42,853 [test_selenium] -------------------------------------
+2026-07-06 10:41:42,853 [test_selenium] Test source : decodex (https://www.lemonde.fr/verification/)
+2026-07-06 10:41:42,853 [test_selenium]           disponibilité...............: test en cours
+2026-07-06 10:41:43,104 [test_selenium]           disponibilité...............: ✅ en ligne
+2026-07-06 10:41:43,105 [test_selenium]           langue......................: fr
+2026-07-06 10:41:43,105 [test_selenium]  ------------------------------------
+2026-07-06 10:41:43,105 [test_selenium]  Lancement Chrome headless + extraction
+2026-07-06 10:41:43,105 [selenium] ######################################
+2026-07-06 10:41:43,105 [selenium]  ┌[SeleniumAdapter]...................: [extraire_données] ------------------ [https://www.lemonde.fr/verification/]
+2026-07-06 10:41:43,105 [selenium]  ------------------------------------
+2026-07-06 10:41:43,105 [selenium]  Démarrage Chrome headless
+2026-07-06 10:41:47,718 [selenium]           driver Chrome...............: démarré ✓
+2026-07-06 10:41:52,045 [selenium]           articles trouvés............: 0
+2026-07-06 10:41:52,222 [selenium]           driver Chrome...............: fermé ✓
+2026-07-06 10:41:52,222 [selenium]           publications valides........: 0
+2026-07-06 10:41:52,222 [selenium]           entrées rejetées............: 0
+2026-07-06 10:41:52,222 [selenium]  └[SeleniumAdapter]...................: [extraire_données] ------------------ [0 publications extraites Exec: 00:00:08.087239]
+2026-07-06 10:41:52,222 [selenium] **************************************
+2026-07-06 10:41:52,222 [test_selenium]           durée extraction............: 8.1s
+2026-07-06 10:41:52,222 [test_selenium]           publications................: 0
+2026-07-06 10:41:52,223 [test_selenium] [WARNING  ] test_selenium Aucune publication extraite pour decodex — vérifier les sélecteurs CSS (site possiblement modifié)
+2026-07-06 10:41:52,223 [test_selenium] -------------------------------------
+2026-07-06 10:41:52,223 [test_selenium] RAPPORT FINAL SELENIUM
+2026-07-06 10:41:52,223 [test_selenium]           africacheck.................: HORS LIGNE — 0 publications (0s)
+2026-07-06 10:41:52,223 [test_selenium]           decodex.....................: OK — 0 publications (8.1s)
+2026-07-06 10:41:52,223 [test_selenium]           total publications..........: 0
+2026-07-06 10:41:52,223 [test_selenium]  └[test_selenium].....................: [main] ------------------------------ [0 publications extraites Exec: 00:00:08.599662]
+2026-07-06 10:41:52,224 [test_selenium] **************************************
+(m12_ocr) rafael@LAPTOP-8GGFOLQ7:/mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr$

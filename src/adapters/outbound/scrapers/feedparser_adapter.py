@@ -574,6 +574,28 @@ class FeedparserAdapter(ScraperPort):
         # Un rating absent ou non binaire (half-true) → entrée rejetée.
         # ----------------------------------------------------------------------
         if self._source == "politifact":
+            # ------------------------------------------------------------------
+            # Cas piège identifié en production : le flux /rss/factchecks/
+            # inclut l'image DANS le summary → _extraire_image() la trouve
+            # au fallback 4 et n'a jamais besoin de fetcher l'article →
+            # le cache _html_article reste vide → rating introuvable.
+            # Le rating n'existe QUE dans la page : on la récupère ICI si
+            # (et seulement si) aucun fetch n'a encore eu lieu.
+            # ------------------------------------------------------------------
+            if not self._html_article:
+                url_article = getattr(entrée, "link", "")
+                if url_article:
+                    try:
+                        self._fetch_effectué = True   # Délai de politesse actif
+                        réponse = requests.get(
+                            url_article,
+                            timeout = TIMEOUT_OG_IMAGE,
+                            headers = {"User-Agent": AGENT_NAVIGATEUR},
+                        )
+                        if réponse.status_code == 200:
+                            self._html_article = réponse.text
+                    except Exception:
+                        pass                          # Rating restera introuvable
             slug = re.search(
                 r'politifact/rulings/([a-z0-9_-]+)\.(?:jpg|png)',
                 self._html_article,
@@ -589,9 +611,19 @@ class FeedparserAdapter(ScraperPort):
         # mot-clé de véracité, l'entrée est rejetée (pas de FAKE par défaut).
         # ----------------------------------------------------------------------
         if self._source == "chequeado":
-            titre_es = titre.lower()
+            # ------------------------------------------------------------------
+            # Le verdict n'est pas toujours dans le titre : les WordPress de
+            # fact-checking (dont Chequeado) le publient souvent comme
+            # CATÉGORIE du flux (Falso, Verdadero...). On analyse donc le
+            # titre ET les catégories avant de rejeter l'entrée.
+            # ------------------------------------------------------------------
+            catégories_es = " ".join(
+                tag.get("term", "").lower()
+                for tag in getattr(entrée, "tags", [])
+            )
+            champ_analysé = titre.lower() + " " + catégories_es
             for mot_clé, label in LABELS_CHEQUEADO.items():
-                if mot_clé in titre_es:
+                if mot_clé in champ_analysé:
                     return label
             raise LabelInvalideErreur("aucun mot-clé", "chequeado.com")
 

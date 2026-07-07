@@ -47,6 +47,14 @@ from   typing   import List, Tuple         # Annotations de types
 # --- Dépendances externes : validation HTTP des images ------------------------
 import requests                            # Vérification des URLs d'images
 
+# --- Racine du projet : indispensable AVANT les imports src.* ------------------
+# En exécution directe (python3 src/application/transform_service.py),
+# Python place src/application/ dans sys.path — pas la racine du projet.
+# Sans ce bloc, "import src.*" échoue (ModuleNotFoundError: src).
+RACINE_PROJET = Path(__file__).resolve().parents[2]
+if str(RACINE_PROJET) not in sys.path:
+    sys.path.insert(0, str(RACINE_PROJET))
+
 # --- Domaine : exceptions métier (zéro dépendance externe) --------------------
 from   src.domain.exceptions import (
     CheckItErreur,                         # Base de toutes les erreurs métier
@@ -64,8 +72,8 @@ from   src.tools.rafael.log_tool import LogTool
 # ==============================================================================
 # CONFIGURATION — chemins, réseau et seuils de validation
 # ==============================================================================
-DOSSIER_BRUT      = Path("data/raw")       # Entrée : extractions brutes
-DOSSIER_SORTIE    = Path("data/processed") # Sortie : dataset exploitable
+DOSSIER_BRUT      = RACINE_PROJET / "data" / "raw"        # Extractions brutes
+DOSSIER_SORTIE    = RACINE_PROJET / "data" / "processed"  # Dataset exploitable
 TIMEOUT_IMAGE     = 10                     # s — validation HTTP d'une image
 TAILLE_MIN_OCTETS = 1_000                  # octets — écarte pixels de tracking
 TYPES_IMAGE_OK    = (                      # Content-Types image acceptés
@@ -521,12 +529,6 @@ class TransformService:
 # POINT D'ENTRÉE : exécution directe du pipeline (livrable L3 exécutable)
 # ==============================================================================
 if __name__ == "__main__":
-    # Bootstrap : ajoute la racine du projet au chemin des imports pour
-    # permettre "python3 src/application/transform_service.py" direct.
-    RACINE = Path(__file__).resolve().parents[2]
-    if str(RACINE) not in sys.path:
-        sys.path.insert(0, str(RACINE))
-
     service = TransformService(
         vérifier_images=False,               # True en production (plus lent)
     )
