@@ -122,6 +122,23 @@ SQL_LIAISON_RUN_SOURCE = """
     ON CONFLICT DO NOTHING;
 """
 
+# Alimente le tableau de bord (L6) : historique des runs et référentiel
+# des sources — aucune logique, uniquement de la lecture (SELECT).
+SQL_SELECT_RUNS = """
+    SELECT   run_id, started_at, finished_at, nb_extraites,
+             nb_valides, nb_rejetées, taux_intégrité
+    FROM     extraction_runs
+    ORDER BY started_at DESC
+    LIMIT    %s;
+"""
+
+SQL_SELECT_SOURCES = """
+    SELECT   nom_domaine, type_source, langue, méthode_extraction,
+             première_extraction, dernière_extraction, nb_publications
+    FROM     sources
+    ORDER BY nb_publications DESC;
+"""
+
 
 # ##############################################################################
 # CLASSE : PostgresqlAdapter
@@ -290,6 +307,24 @@ class PostgresqlAdapter(PersistencePort):
                 """,
                 (limite,),
             )
+            colonnes = [col[0] for col in curseur.description]
+            return [dict(zip(colonnes, ligne)) for ligne in curseur]
+
+    # ##########################################################################
+    def obtenir_runs(self, limite: int = 20) -> List[dict]:
+        """Historique des derniers runs d'extraction (KPI L6)."""
+        connexion = self._obtenir_connexion()
+        with connexion.cursor() as curseur:
+            curseur.execute(SQL_SELECT_RUNS, (limite,))
+            colonnes = [col[0] for col in curseur.description]
+            return [dict(zip(colonnes, ligne)) for ligne in curseur]
+
+    # ##########################################################################
+    def obtenir_sources(self) -> List[dict]:
+        """État complet du référentiel des sources (KPI L6)."""
+        connexion = self._obtenir_connexion()
+        with connexion.cursor() as curseur:
+            curseur.execute(SQL_SELECT_SOURCES)
             colonnes = [col[0] for col in curseur.description]
             return [dict(zip(colonnes, ligne)) for ligne in curseur]
 
