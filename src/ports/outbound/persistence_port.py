@@ -62,6 +62,27 @@ class PersistencePort(ABC):
 
     # ##########################################################################
     @abstractmethod
+    def obtenir_runs(self, limite: int = 20) -> List[dict]:
+        """
+        Historique des derniers runs d'extraction (table extraction_runs).
+
+        Alimente les KPIs de précision (taux_intégrité) et de rapidité
+        (durée started_at → finished_at) du tableau de bord (L6).
+        """
+
+    # ##########################################################################
+    @abstractmethod
+    def obtenir_sources(self) -> List[dict]:
+        """
+        État du référentiel des sources (table sources).
+
+        Alimente le KPI de fraîcheur (dernière_extraction) et le volume
+        par source du tableau de bord — permet de détecter une source
+        tombée à zéro publication.
+        """
+
+    # ##########################################################################
+    @abstractmethod
     def enregistrer_run(self, run: dict) -> None:
         """
         Historise un run d'extraction complet.
