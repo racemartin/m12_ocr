@@ -20,7 +20,7 @@ selon une architecture hexagonale (Ports & Adapters).
 
 **Projet** OpenClassrooms — *Extrayez des données multimodales de sites web*
 **Auteur** Rafael Cerezo Martín
-**Statut** En développement actif
+**Statut** Pipeline fonctionnel de bout en bout — finalisation des livrables
 
 ---
 
@@ -30,11 +30,16 @@ selon une architecture hexagonale (Ports & Adapters).
 2. [Installation de l'environnement](#installation-de-lenvironnement)
 3. [Configuration Airflow (WSL2)](#configuration-airflow-wsl2)
 4. [Variables d'environnement](#variables-denvironnement)
-5. [Sources de données et adaptateurs](#sources-de-données-et-adaptateurs)
-6. [Tester chaque adaptateur](#tester-chaque-adaptateur)
-7. [Livrables du projet](#livrables-du-projet)
-8. [Historique de développement](#historique-de-développement)
-9. [Problèmes rencontrés et solutions](#problèmes-rencontrés-et-solutions)
+5. **Étapes de la mission**
+   1. [Étape 1 — Explorez et qualifiez les sources de données](#étape-1--explorez-et-qualifiez-les-sources-de-données)
+   2. [Étape 2 — Développez des scripts d'extraction automatisée](#étape-2--développez-des-scripts-dextraction-automatisée)
+   3. [Étape 3 — Implémentez un pipeline de transformation](#étape-3--implémentez-un-pipeline-de-transformation)
+   4. [Étape 4 — Orchestrez le pipeline avec Airflow](#étape-4--orchestrez-le-pipeline-avec-airflow)
+   5. [Vérification préalable — Dashboard console (CLI)](#vérification-préalable--dashboard-console-cli)
+   6. [Étape 5 — Évaluez et visualisez les performances](#étape-5--évaluez-et-visualisez-les-performances)
+6. [Livrables du projet](#livrables-du-projet)
+7. [Historique de développement](#historique-de-développement)
+8. [Problèmes rencontrés et solutions](#problèmes-rencontrés-et-solutions)
 
 ---
 
@@ -51,7 +56,7 @@ Infrastructure (4) → Application (3) → Ports (2) → Domaine (1)
 m12_ocr/
 ├── src/
 │   ├── domain/                    CAPA 1 — Domaine (zéro dépendance)
-│   │   ├── models.py              Entité Publication, LabelVéracité
+│   │   ├── models.py              Entités Publication, Source, ExtractionRun
 │   │   └── exceptions.py          Hiérarchie d'exceptions métier
 │   │
 │   ├── ports/                     CAPA 2 — Contrats abstraits
@@ -63,17 +68,19 @@ m12_ocr/
 │   │       └── storage_port.py
 │   │
 │   ├── application/                CAPA 3 — Orchestration des cas d'usage
-│   │   ├── pipeline_service.py
-│   │   ├── transform_service.py
-│   │   └── monitoring_service.py
+│   │   ├── pipeline_service.py     Composition root (CLI + Airflow)
+│   │   ├── transform_service.py    Nettoyage, validation, normalisation
+│   │   └── monitoring_service.py   Calcul des KPI (zéro import Streamlit)
 │   │
 │   ├── adapters/                   CAPA 4 — Infrastructure
 │   │   ├── inbound/
-│   │   │   └── airflow_dag.py      DAG Airflow — orchestration ETL
+│   │   │   └── airflow_dag.py      DAG Airflow — adaptateur mince
 │   │   └── outbound/
 │   │       ├── scrapers/           5 adaptateurs d'extraction
-│   │       ├── persistence/        PostgreSQL, MongoDB
-│   │       └── monitoring/         Dashboard Streamlit
+│   │       ├── persistence/        PostgreSQL (PersistencePort)
+│   │       └── monitoring/         2 adaptateurs de présentation :
+│   │                               streamlit_dashboard.py (web)
+│   │                               console_dashboard.py   (CLI)
 │   │
 │   └── tools/rafael/
 │       └── log_tool.py             Journalisation colorée RFC 5424
@@ -82,7 +89,8 @@ m12_ocr/
 ├── tests/{unit,integration}/       Tests pytest
 ├── data/{raw,processed}/           Données extraites (hors Git)
 ├── config/                         Paramètres (hors Git)
-├── docs/                           Livrables L1, L4...
+├── docs/                           Livrables L1, L4, L7...
+│   └── requetes_verification.sql   Vérification des KPI en psql
 ├── airflow_home/                   Métadonnées Airflow (hors Git)
 ├── .env.example                    Modèle de variables d'environnement
 └── pyproject.toml                  Dépendances uv
@@ -234,7 +242,8 @@ Accès UI : **http://localhost:8080** — identifiants `admin` / `admin`
 ## Variables d'environnement
 
 Les clés API et identifiants de connexion sont gérés via un fichier
-`.env` à la racine du projet, jamais commité (protégé par `.gitignore`).
+`.env` à la racine du projet, jamais commité (protégé par `.gitignore`)
+et chargé par `python-dotenv` (`load_dotenv`).
 
 ```bash
 # Copier le modèle et le remplir
@@ -247,62 +256,50 @@ nano .env
 | `NEWSDATA_API_KEY` | NewsData.io | https://newsdata.io/register (gratuit, 200 req/jour) |
 | `CLAIMBUSTER_API_KEY` | ClaimBuster (optionnel) | https://idir.uta.edu/claimbuster/ |
 | `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET` | Reddit API (futur) | https://www.reddit.com/prefs/apps |
-| `POSTGRES_*` | Base de données | configuration locale |
+| `CHECKIT_PG_*` | PostgreSQL | configuration locale |
+| `CHECKIT_VERIFIER_IMAGES` | Pipeline | `True` = validation HTTP des images |
+| `LOG_LEVEL` | LogTool | 1–8 (RFC 5424) |
 
-Le fichier `.env` est chargé automatiquement par `python-dotenv` dans
-chaque adaptateur et script de test — aucun `export` manuel requis.
+En mode CLI, le `.env` est lu par le composition root de
+`pipeline_service.py`. Sous Airflow, les mêmes valeurs vivent dans les
+**Variables Airflow** — jamais de credentials en dur dans le DAG.
 
 ---
 
-## Sources de données et adaptateurs
+## Étape 1 — Explorez et qualifiez les sources de données
+
+> Livrable associé : **L1 — Rapport d'exploration des sources**
 
 Cinq adaptateurs implémentent le contrat `ScraperPort`, chacun couvrant
 des sources **originales**, choisies pour leur faible présence dans les
 datasets Kaggle/HuggingFace standards utilisés par la majorité des projets
 étudiants.
 
-### 1. `feedparser_adapter.py` — Flux RSS
+### Sources actives (état actuel du pipeline)
 
-| Source | Langue | Labels |
-|--------|--------|--------|
-| AFP Factuel | FR | Explicites dans le titre (FAUX/VRAI/TROMPEUR) |
-| EUvsDisinfo | EN | Tous FAKE — base officielle UE |
-| Les Observateurs (France 24) | FR | Explicites — vérification collaborative |
-| Hoaxbuster | FR | Fact-checker FR grand public |
+Après plusieurs itérations de débogage (voir
+[Problèmes rencontrés](#problèmes-rencontrés-et-solutions)), le
+`FeedparserAdapter` concentre les sources les plus stables — les flux
+RSS/Bluesky se sont révélés bien plus fiables que les pages scrapées.
 
-Outil léger, sans navigateur — parsing XML/Atom direct.
+| | Source | Canal | Langue |
+|--|--------|-------|--------|
+| <img src="docs/images/afp_factual_logo.png" height="20"> | AFP Factuel | Bluesky RSS | FR |
+| <img src="docs/images/eu_vs_disinfo.png" height="20"> | EUvsDisinfo | RSS | EN |
+| <img src="docs/images/hoaxbuster_logo.png" height="20"> | Hoaxbuster | RSS | FR |
+| | El País | MRSS | ES |
+| <img src="docs/images/politi_fact_logo.png" height="20"> | PolitiFact | RSS | EN |
+| <img src="docs/images/le_monde_fr_logo.png" height="20"> | Les Décodeurs (Le Monde) | RSS | FR |
+| | Chequeado | RSS | ES |
 
-### 2. `requests_adapter.py` — API REST
+*(Africa Check a été abandonné — HTTP 403 anti-bot persistant.)*
 
-| Source | Rôle |
-|--------|------|
-| NewsData.io | Articles frais multilingues avec image |
-| MediaBiasFactCheck (MBFC) | Évaluation fiabilité du domaine source |
-| ClaimBuster | Scoring d'affirmabilité d'un texte (académique UTA) |
+Tous les sources retenues sont des fact-checkers certifiés **IFCN**,
+ce qui justifie le label binaire REAL/FAKE : elles ne vérifient que des
+affirmations factuelles, jamais des opinions (distinction opinion vs
+désinformation documentée dans le L1).
 
-### 3. `bs4_adapter.py` — HTML statique
-
-| Source | Langue | Particularité |
-|--------|--------|----------------|
-| FullFact | EN | Fact-checker UK, 4 classes de labels |
-| Correctiv | DE | Fact-checker allemand certifié IFCN |
-| Maldita | ES | Fact-checker espagnol |
-
-### 4. `scrapy_adapter.py` — Crawling multi-pages
-
-| Source | Langue | Particularité |
-|--------|--------|----------------|
-| PolitiFact | EN | Pagination complexe, 6 niveaux de labels (Pants on Fire inclus) |
-| Les Surligneurs | FR | Vérification déclarations politiques FR, pagination WordPress |
-
-### 5. `selenium_adapter.py` — Sites JavaScript dynamiques
-
-| Source | Langue | Pourquoi Selenium |
-|--------|--------|--------------------|
-| Logically Facts | EN | Rendu React complet requis |
-| Decodex (Le Monde) | FR | Pagination JavaScript |
-
-
+### Panorama complet des adaptateurs
 
 | Adaptateur | | Source | Langue | Labels |
 |-----------|-----|--------|--------|--------|
@@ -321,9 +318,30 @@ Outil léger, sans navigateur — parsing XML/Atom direct.
 | <img src="docs/images/selenium_logo.png" height="16"> Selenium | <img src="docs/images/logically_facts_logo.png" height="20"> | Logically | EN | 3 classes |
 | <img src="docs/images/selenium_logo.png" height="16"> Selenium | <img src="docs/images/le_monde_fr_logo.png" height="20"> | Decodex | FR | 3 classes |
 
+### Correspondance des labels bruts → REAL / FAKE
+
+| | Source | REAL ✅ | FAKE ❌ |
+|--|--------|---------|---------|
+| <img src="docs/images/afp_factual_logo.png" height="20"> | AFP Factuel | `vrai` `vérifié` `confirmé` | `faux` `fake` `trompeur` `inexact` `manipulé` `hors contexte` |
+| <img src="docs/images/eu_vs_disinfo.png" height="20"> | EUvsDisinfo | — | `disinformation` `fake` `false` `misleading` *(tous FAKE)* |
+| <img src="docs/images/les_observateurs_logo.png" height="20"> | Les Observateurs | `vrai` `vérifié` | `faux` `trompeur` |
+| <img src="docs/images/hoaxbuster_logo.png" height="20"> | Hoaxbuster | `vrai` `vérifié` | `faux` `hoax` `trompeur` |
+| <img src="docs/images/newdata_io.png" height="20"> | NewsData.io | *(source fiable MBFC)* `bbc` `reuters` `afp` `lemonde` | *(source non fiable MBFC)* `rt` `sputnik` `breitbart` `infowars` |
+| <img src="docs/images/claim_buster_logo.png" height="20"> | ClaimBuster | — | — *(score 0.0→1.0 — enrichissement uniquement)* |
+| <img src="docs/images/media_bias_fact_check.png" height="20"> | MBFC | `very high` `high` | `mixed` `low` `very low` `questionable` `conspiracy` `pseudoscience` `satire` |
+| <img src="docs/images/full_fact.png" height="20"> | FullFact UK | `true` `correct` `mostly true` | `false` `misleading` `incorrect` `unverified` `missing context` |
+| <img src="docs/images/correctiv_logo.png" height="20"> | Correctiv DE | `richtig` `wahr` `stimmt` | `falsch` `irreführend` `fake` |
+| <img src="docs/images/maldita_es.png" height="20"> | Maldita ES | `verdadero` `verdad` | `falso` `engañoso` `bulo` `satira` |
+| <img src="docs/images/politi_fact_logo.png" height="20"> | PolitiFact | `true` `mostly true` | `half-true` `mostly false` `false` `pants on fire` |
+| <img src="docs/images/les_surligneurs_logo.png" height="20"> | Les Surligneurs | `exact` `vrai` | `inexact` `faux` `trompeur` `exagéré` |
+| <img src="docs/images/logically_facts_logo.png" height="20"> | Logically | `true` `verified` | `false` `misleading` `unverified` `partly false` |
+| <img src="docs/images/le_monde_fr_logo.png" height="20"> | Decodex | `vrai` `vérifié` | `faux` `trompeur` `inexact` |
+
 ---
 
-## Tester chaque adaptateur
+## Étape 2 — Développez des scripts d'extraction automatisée
+
+> Livrable associé : **L2 — Scripts d'extraction automatisée**
 
 Chaque adaptateur dispose d'un script de test autonome dans `scripts/`,
 exécutable indépendamment du DAG Airflow — utile pour valider une source
@@ -335,7 +353,7 @@ cd /mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr
 source .venv/bin/activate
 ```
 
-### Flux RSS — AFP, EUvsDisinfo, Hoaxbuster
+### Flux RSS — AFP (Bluesky), EUvsDisinfo, Hoaxbuster, El País, PolitiFact, Les Décodeurs, Chequeado
 ```bash
 python3 scripts/test_feedparser.py
 ```
@@ -346,7 +364,7 @@ python3 scripts/test_feedparser.py
 python3 scripts/test_requests.py
 ```
 
-### HTML statique — FullFact, Correctiv, Maldita
+### HTML statique — FullFact, Correctiv, Maldita (BS4)
 ```bash
 # Toutes les sources
 python3 scripts/test_bs4.py
@@ -379,17 +397,160 @@ langue, taux d'intégrité) et sauvegarde le résultat en JSON dans
 
 ---
 
+## Étape 3 — Implémentez un pipeline de transformation
+
+> Livrables associés : **L3 — Pipeline de transformation**
+> et **L4 — Schéma de données finalisé**
+
+Le `TransformService` (couche application) applique en séquence :
+lecture des données brutes, filtrage des paires texte–image incomplètes,
+`nettoie_texte()`, `valide_image()`, `normalise_label()` (→ REAL/FAKE),
+dédoublonnage par hash SHA-256, puis mapping vers le schéma physique.
+
+Le pipeline complet est exécutable **hors Airflow** grâce au composition
+root CLI de `pipeline_service.py`, qui charge le `.env` via
+`python-dotenv` :
+
+```bash
+uv run python3 src/application/pipeline_service.py
+```
+
+Résultat validé sur données réelles :
+
+```
+RAPPORT DE TRANSFORMATION — ÉTAPE 3
+  Entrées brutes......: 644
+  Publications valides: 254
+  Entrées rejetées....: 390
+  Taux d'intégrité....: 39.4%
+  REAL / FAKE.........: 177 / 77
+```
+
+> Lecture du taux d'intégrité : `data/raw` accumule les extractions de
+> test de plusieurs jours — la majorité des rejets sont des **doublons
+> neutralisés par le hash SHA-256** (preuve du bon fonctionnement du
+> dédoublonnage), et non des données invalides.
+
+La persistance est assurée par `PostgresqlAdapter` (implémentation de
+`PersistencePort`) : tout le SQL du projet vit dans cet adaptateur —
+insert idempotent (`ON CONFLICT (id) DO NOTHING`), quatre tables
+(`publications`, `sources`, `extraction_runs`, `run_sources`).
+
+---
+
+## Étape 4 — Orchestrez le pipeline avec Airflow
+
+> Livrable associé : **L5 — Flux ETL Airflow**
+
+Le DAG `checkit_etl` (`src/adapters/inbound/airflow_dag.py`) est un
+**adaptateur inbound mince** : il ne contient aucune logique métier et se
+limite à invoquer les méthodes de l'`OrchestreurPort`.
+
+Principes respectés :
+
+- **XCom ne transporte que des chemins de fichiers**, jamais les données
+  elles-mêmes.
+- **Credentials PostgreSQL via les Variables Airflow** — jamais en dur.
+- 5 tâches atomiques : `extract` → `validate_raw` → `transform` →
+  `load` → `notify`.
+
+État validé : **5/5 tâches SUCCESS** dans l'UI Airflow, et chargement
+confirmé en base :
+
+```
+checkit=> SELECT declared_label, COUNT(*)
+          FROM publications GROUP BY 1;
+ declared_label | count
+ FAKE           |    77
+ REAL           |   302
+```
+
+L'**idempotence** est vérifiée : un second lancement sur les mêmes
+données n'insère aucun doublon, tandis qu'un nouveau run est historisé
+dans `extraction_runs`.
+
+---
+
+## Vérification préalable — Dashboard console (CLI)
+
+> Étape intermédiaire réalisée **après l'orchestration (Étape 4)** et
+> **avant la visualisation Streamlit (Étape 5)**.
+
+Avant de lancer le serveur web, tous les KPI se vérifient en ligne de
+commande grâce à un **deuxième adaptateur de présentation** qui consomme
+exactement le même `MonitoringService` que Streamlit :
+
+```bash
+uv run python3 src/adapters/outbound/monitoring/console_dashboard.py
+```
+
+Ce que ce rapport texte apporte :
+
+- **Preuve d'architecture hexagonale** : `console_dashboard.py` importe
+  `MonitoringService` et ne recalcule rien — il ne fait que `print()`.
+  Ajouter un adaptateur de présentation ne coûte que ce fichier, jamais
+  les couches inférieures.
+- **Vérification rapide** de tous les KPI (précision, rapidité, coût,
+  statut par source) sans serveur web, avant tout commit du dashboard.
+- **Alignement garanti** : étiquettes ASCII à largeur fixe
+  (`[OK]` / `[!!]` / `[XX]`) dans les tableaux — les emojis sont
+  réservés aux lignes d'alerte en texte libre.
+
+En complément, `docs/requetes_verification.sql` reproduit chaque KPI
+directement en psql, indépendamment de Python :
+
+```bash
+psql -h localhost -U checkit -d checkit -f docs/requetes_verification.sql
+```
+
+---
+
+## Étape 5 — Évaluez et visualisez les performances
+
+> Livrables associés : **L6 — Tableau de bord KPI Streamlit**
+> et **L7 — Plan de monitoring**
+
+Le `MonitoringService` est un **service pur de la couche application**
+(zéro import Streamlit) qui calcule trois familles de KPI :
+
+| Famille | Contenu |
+|---------|---------|
+| **Précision** | Répartition REAL/FAKE, taux d'intégrité du dernier run |
+| **Rapidité** | Durée par run, moyenne mobile |
+| **Coût** | Proxy requêtes cumulées × temps CPU estimé |
+
+Statut par source avec seuils de couleur :
+
+| Seuil | Statut |
+|-------|--------|
+| Taux d'intégrité ≥ 85 % | 🟢 vert |
+| 70 % ≤ taux < 85 % | 🟠 orange |
+| Taux < 70 % | 🔴 rouge |
+| Fraîcheur > 48 h | 🟠 orange |
+
+Lancement du dashboard web :
+
+```bash
+uv run streamlit run src/adapters/outbound/monitoring/streamlit_dashboard.py
+```
+
+Le plan de monitoring (L7) documente les seuils d'alerte, la gestion
+des erreurs et les fréquences de vérification, en cohérence avec les
+automatisations du DAG.
+
+---
+
 ## Livrables du projet
 
 | N° | Livrable | Format | Statut |
 |----|----------|--------|--------|
 | L1 | Rapport d'exploration des sources | [`docs/L1_rapport_exploration_sources.md`](docs/L1_rapport_exploration_sources.md) | ✅ |
 | L2 | Scripts d'extraction automatisée | [`src/adapters/outbound/scrapers/*.py`](src/adapters/outbound/scrapers/) | ✅ |
-| L3 | Pipeline de transformation | [`src/application/transform_service.py`](src/application/transform_service.py) | ⬜ À venir |
-| L4 | Schéma de données finalisé | [`docs/L4_schema_donnees.md`](docs/L4_schema_donnees.md) (Mermaid) | ✅ |
-| L5 | Flux ETL Airflow | [`src/adapters/inbound/airflow_dag.py`](src/adapters/inbound/airflow_dag.py) | ⬜ À venir |
-| L6 | Tableau de bord KPI Streamlit | [`src/adapters/outbound/monitoring/`](src/adapters/outbound/monitoring/) | ⬜ À venir |
-| L7 | Plan de monitoring | [`docs/L7_plan_monitoring.md`](docs/L7_plan_monitoring.md) | ⬜ À venir |
+| L3 | Pipeline de transformation | [`src/application/transform_service.py`](src/application/transform_service.py) | ✅ |
+| L4 | Schéma de données finalisé | [`docs/L4_schema_donnees.md`](docs/L4_schema_donnees.md) (Mermaid + PNG) | ✅ |
+| L5 | Flux ETL Airflow | [`src/adapters/inbound/airflow_dag.py`](src/adapters/inbound/airflow_dag.py) | ✅ 5/5 SUCCESS |
+| L6 | Tableau de bord KPI Streamlit | [`src/adapters/outbound/monitoring/`](src/adapters/outbound/monitoring/) | ✅ (+ console) |
+| L7 | Plan de monitoring | [`docs/L7_plan_monitoring.md`](docs/L7_plan_monitoring.md) | 🔶 En finalisation |
 
 ---
 
@@ -408,8 +569,8 @@ ce projet.
    de login successifs (table `session` manquante, hash de mot de passe).
 5. **Structure hexagonale complète** — création des 4 couches
    (`domain`, `ports`, `application`, `adapters`) avec leurs `__init__.py`.
-6. **Couche Domaine (L1)** — `models.py` (entité `Publication`,
-   `LabelVéracité`) et `exceptions.py` (hiérarchie `CheckItErreur`).
+6. **Couche Domaine (L1)** — `models.py` (entités `Publication`,
+   `Source`, `ExtractionRun`) et `exceptions.py` (hiérarchie `CheckItErreur`).
 7. **Couche Ports (L2)** — quatre interfaces abstraites :
    `ScraperPort`, `PersistencePort`, `StoragePort`, `OrchestreurPort`.
 8. **Cinq adaptateurs d'extraction (L4)** — un par technologie de
@@ -420,26 +581,29 @@ ce projet.
 10. **Installation Google Chrome** — résolution des conflits
     snap/apt sous WSL2 pour le fonctionnement de Selenium.
 11. **Documentation L1 et L4** — rapport d'exploration des sources
-    et schéma de données (modèle conceptuel + physique) en Mermaid.
+    et schéma de données (modèle conceptuel + physique) en Mermaid,
+    diagrammes corrigés pour le rendu GitHub, blocs cassés remplacés
+    par des exports PNG.
+12. **Débogage des sélecteurs** — inspection du DOM réel via DevTools,
+    mode "card" FullFact, fallback universel `og:image`, remplacement
+    d'AFP Factuel RSS (403) par le flux Bluesky.
+13. **Consolidation Feedparser** — extension à 8 sources RSS/Bluesky
+    (dont El País MRSS, PolitiFact RSS, Les Décodeurs, Chequeado),
+    correction du rating PolitiFact et de l'inférence de labels
+    Chequeado (scan des catégories RSS).
+14. **Refactor persistence** — extraction de `psycopg2` hors de
+    `PipelineService` vers `PostgresqlAdapter` (contrat
+    `PersistencePort`) ; adoption de `python-dotenv`.
+15. **Pipeline de transformation (L3)** — `TransformService` validé
+    sur données réelles (644 → 254 valides, dédoublonnage SHA-256).
+16. **Orchestration Airflow (L5)** — DAG `checkit_etl` : 5/5 tâches
+    SUCCESS, XCom limité aux chemins de fichiers, credentials via
+    Variables Airflow.
+17. **Monitoring (L6/L7)** — `MonitoringService` pur (3 familles de
+    KPI + statut par source), deux adaptateurs de présentation
+    (console puis Streamlit) et `requetes_verification.sql` pour la
+    contre-vérification en psql.
 
-
-
-| | Source | REAL ✅ | FAKE ❌ |
-|--|--------|---------|---------|
-| <img src="docs/images/afp_factual_logo.png" height="20"> | AFP Factuel | `vrai` `vérifié` `confirmé` | `faux` `fake` `trompeur` `inexact` `manipulé` `hors contexte` |
-| <img src="docs/images/eu_vs_disinfo.png" height="20"> | EUvsDisinfo | — | `disinformation` `fake` `false` `misleading` *(tous FAKE)* |
-| <img src="docs/images/les_observateurs_logo.png" height="20"> | Les Observateurs | `vrai` `vérifié` | `faux` `trompeur` |
-| <img src="docs/images/hoaxbuster_logo.png" height="20"> | Hoaxbuster | `vrai` `vérifié` | `faux` `hoax` `trompeur` |
-| <img src="docs/images/newdata_io.png" height="20"> | NewsData.io | *(source fiable MBFC)* `bbc` `reuters` `afp` `lemonde` | *(source non fiable MBFC)* `rt` `sputnik` `breitbart` `infowars` |
-| <img src="docs/images/claim_buster_logo.png" height="20"> | ClaimBuster | — | — | *(score 0.0→1.0 — enrichissement uniquement)* |
-| <img src="docs/images/media_bias_fact_check.png" height="20"> | MBFC | `very high` `high` | `mixed` `low` `very low` `questionable` `conspiracy` `pseudoscience` `satire` |
-| <img src="docs/images/full_fact.png" height="20"> | FullFact UK | `true` `correct` `mostly true` | `false` `misleading` `incorrect` `unverified` `missing context` |
-| <img src="docs/images/correctiv_logo.png" height="20"> | Correctiv DE | `richtig` `wahr` `stimmt` | `falsch` `irreführend` `fake` |
-| <img src="docs/images/maldita_es.png" height="20"> | Maldita ES | `verdadero` `verdad` | `falso` `engañoso` `bulo` `satira` |
-| <img src="docs/images/politi_fact_logo.png" height="20"> | PolitiFact | `true` `mostly true` | `half-true` `mostly false` `false` `pants on fire` |
-| <img src="docs/images/les_surligneurs_logo.png" height="20"> | Les Surligneurs | `exact` `vrai` | `inexact` `faux` `trompeur` `exagéré` |
-| <img src="docs/images/logically_facts_logo.png" height="20"> | Logically | `true` `verified` | `false` `misleading` `unverified` `partly false` |
-| <img src="docs/images/le_monde_fr_logo.png" height="20"> | Decodex | `vrai` `vérifié` | `faux` `trompeur` `inexact` |
 ---
 
 ## Problèmes rencontrés et solutions
@@ -487,44 +651,23 @@ pas de pont réseau automatique.
 pour rediriger le port 8080 vers l'IP WSL2. Non bloquant pour l'usage
 du projet — `localhost:8080` suffit en développement local.
 
+### Sources retournant 0 publication
+**Cause(s)** Trois familles de pannes distinctes :
+`403` anti-bot (AFP Factuel RSS, Africa Check), sélecteurs CSS
+obsolètes après refonte des sites (FullFact, Correctiv, Maldita,
+PolitiFact scraping), timeouts JS (Decodex).
+**Solution** Réinspection du DOM réel via DevTools et correction des
+sélecteurs ; bascule vers les flux RSS/Bluesky, plus stables que les
+pages scrapées (AFP → Bluesky, PolitiFact → RSS) ; abandon
+d'Africa Check (403 persistant).
+
+### Alignement des tableaux du dashboard console
+**Cause** Les emojis de statut ont une largeur variable selon le
+terminal, cassant l'alignement des colonnes.
+**Solution** Étiquettes ASCII à largeur fixe (`[OK]`/`[!!]`/`[XX]`)
+dans les tableaux ; emojis réservés aux lignes d'alerte en texte libre.
 
 ---
-
-| | Source | Total | REAL | FAKE |
-|--|--------|-------|------|------|
-| <img src="docs/images/afp_factual_logo.png" height="20"> | AFP Factuel | 0 | — | — |
-| <img src="docs/images/eu_vs_disinfo.png" height="20"> | EUvsDisinfo | 0 | — | — |
-| <img src="docs/images/hoaxbuster_logo.png" height="20"> | Hoaxbuster | 0 | — | — |
-| <img src="docs/images/newdata_io.png" height="20"> | NewsData.io politique | **9** | **2** | **7** |
-| <img src="docs/images/newdata_io.png" height="20"> | NewsData.io santé | 0 | — | — |
-| <img src="docs/images/full_fact.png" height="20"> | FullFact UK | 0 | — | — |
-| <img src="docs/images/correctiv_logo.png" height="20"> | Correctiv DE | 0 | — | — |
-| <img src="docs/images/maldita_es.png" height="20"> | Maldita ES | 0 | — | — |
-| <img src="docs/images/politi_fact_logo.png" height="20"> | PolitiFact | 0 | — | — |
-| <img src="docs/images/logically_facts_logo.png" height="20"> | Logically | 0 | — | — |
-| <img src="docs/images/le_monde_fr_logo.png" height="20"> | Decodex | 0 | — | — |
-| **TOTAL** | | **9** | **2** | **7** |
-
----
-
-### Diagnóstico de los 0 resultados
-
-Hay tres causas distintas :
-
-| Fuente | Causa | Fix |
-|--------|-------|-----|
-| AFP (403) | Bloquea User-Agent automático | Cambiar headers |
-| EUvsDisinfo / Hoaxbuster | Timeout — sitios lentos | Aumentar `TIMEOUT_REQUÊTE` a 30s |
-| FullFact / Correctiv / Maldita | **Sélecteurs CSS obsolètes** — el site cambió su HTML | Reinspeccionar DOM con DevTools |
-| PolitiFact | **Sélecteurs CSS obsolètes** — Scrapy no encontró `article.m-statement` | Reinspeccionar DOM |
-| Logically | Hors ligne | Cambiar source Selenium |
-| Decodex | Timeout JS — `article.article` no apareció en 20s | Aumentar `TIMEOUT_DRIVER` |
-| NewsData.io santé | 0 resultados en la query — término demasiado específico | Cambiar query |
-
-¿Empezamos por corregir los sélecteurs CSS de BS4 y Scrapy? 🚀
-
----
-
 
 ## Auteur
 
