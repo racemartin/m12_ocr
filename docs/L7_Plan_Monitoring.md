@@ -1,8 +1,8 @@
-# Plan de Monitoring — CheckIt.AI (Livrable L7)
+# Plan de Monitoring . CheckIt.AI (Livrable L7)
 
-**Projet** CheckIt.AI — Pipeline ETL multimodal de détection de fake news
-**Version** 1.0 · Juillet 2026
-**Auteur** Rafael Cerezo Martín — Ingénieur Data junior
+* **Projet** CheckIt.AI . Pipeline ETL multimodal de détection de fake news
+* **Version** 1.0 · Juillet 2026
+* **Auteur** Rafael Cerezo Martín 
 
 ---
 
@@ -15,12 +15,12 @@ tableau de bord (livrable L6) s'insère dans l'architecture existante.
 
 **Point de vigilance appliqué** : ce plan documente uniquement ce qui
 est **réellement automatisé** dans le projet (retries Airflow, logs
-RFC 5424, historisation en base) — aucune promesse de surveillance
+RFC 5424, historisation en base) . aucune promesse de surveillance
 non implémentée.
 
 ---
 
-## 2. Architecture de monitoring — vue d'ensemble
+## 2. Architecture de monitoring . vue d'ensemble
 
 ### 2.1 Où vit chaque composant Airflow (schéma corrigé)
 
@@ -48,7 +48,7 @@ composant **interne** au Scheduler (d'où sa limite : une seule tâche
                                       ▼
                          ┌──────────────────────────┐
                          │  BASE DE MÉTADONNÉES     │
-                         │  SQLite — airflow.db     │
+                         │  SQLite . airflow.db     │
                          │  + Variables (checkit_*) │
                          └────────────▲─────────────┘
                                       │
@@ -59,7 +59,7 @@ composant **interne** au Scheduler (d'où sa limite : une seule tâche
                          │  ┌─────────────────────┐ │
                          │  │ SequentialExecutor  │ │  ← composant interne,
                          │  │ (exécute 1 tâche à  │ │    pas un processus
-                         │  │  la fois — limite   │ │    séparé
+                         │  │  la fois . limite   │ │    séparé
                          │  │  imposée par SQLite) │ │
                          │  └─────────────────────┘ │
                          │  ┌─────────────────────┐ │
@@ -73,7 +73,7 @@ composant **interne** au Scheduler (d'où sa limite : une seule tâche
 
 ### 2.2 Où s'insère le tableau de bord (nouveau, Étape 5)
 
-Le dashboard **ne dépend pas d'Airflow** — il lit directement
+Le dashboard **ne dépend pas d'Airflow** . il lit directement
 PostgreSQL via le port `PersistencePort`, indépendamment de qui a
 alimenté la base (CLI ou DAG). C'est une conséquence directe de
 l'architecture hexagonale : Streamlit est un adaptateur de plus, au
@@ -95,12 +95,12 @@ même rang que le DAG.
                          │ exécuter_chargement()
                          ▼
               ┌─────────────────────┐
-              │   PersistencePort    │  (couche ports — contrat)
+              │   PersistencePort    │  (couche ports . contrat)
               └──────────┬───────────┘
                          │ implémente
                          ▼
               ┌─────────────────────┐
-              │  PostgresqlAdapter   │  (couche adapters — SQL)
+              │  PostgresqlAdapter   │  (couche adapters . SQL)
               └──────────┬───────────┘
                          ▼
               ┌─────────────────────┐
@@ -115,7 +115,7 @@ même rang que le DAG.
                          │ injecté dans
               ┌──────────┴───────────┐
               │  MonitoringService    │  (couche application)
-              │  calcule TOUS les KPI │  — zéro import Streamlit
+              │  calcule TOUS les KPI │  . zéro import Streamlit
               └──────────▲───────────┘
                          │ injecté dans
               ┌──────────┴───────────┐
@@ -127,7 +127,7 @@ même rang que le DAG.
 
 **Conséquence pratique** : remplacer Streamlit par Grafana, une API
 REST ou un export PDF automatisé ne nécessiterait de réécrire QUE le
-fichier `streamlit_dashboard.py` — ni `MonitoringService`, ni
+fichier `streamlit_dashboard.py` . ni `MonitoringService`, ni
 `PersistencePort`, ni le reste du pipeline ne seraient touchés.
 
 ---
@@ -139,7 +139,7 @@ fichier `streamlit_dashboard.py` — ni `MonitoringService`, ni
 | KPI | Définition | Source | Seuil d'alerte |
 |---|---|---|---|
 | Taux d'intégrité | % d'entrées valides / entrées extraites | `extraction_runs.taux_intégrité` | 🔴 < 70 % · ⚠️ < 85 % |
-| Ratio REAL/FAKE | Répartition des classes du dataset | `publications` (agrégation) | Informatif — pas d'alerte automatique |
+| Ratio REAL/FAKE | Répartition des classes du dataset | `publications` (agrégation) | Informatif . pas d'alerte automatique |
 | Taux de rejet | % d'entrées écartées (motif journalisé) | `extraction_runs.nb_rejetées` | ⚠️ > 15 % |
 
 ### 3.2 Rapidité
@@ -147,14 +147,14 @@ fichier `streamlit_dashboard.py` — ni `MonitoringService`, ni
 | KPI | Définition | Source | Seuil d'alerte |
 |---|---|---|---|
 | Durée par run | `finished_at - started_at` | `extraction_runs` | ⚠️ > 30 min (= `execution_timeout` Airflow) |
-| Durée par tâche | Visible dans Airflow (Gantt/Task Duration) | Logs Airflow | Pas de seuil automatique — lecture visuelle |
+| Durée par tâche | Visible dans Airflow (Gantt/Task Duration) | Logs Airflow | Pas de seuil automatique . lecture visuelle |
 | Tendance | Moyenne mobile sur les N derniers runs | `MonitoringService.calculer_rapidité()` | Dégradation progressive → investiguer |
 
 ### 3.3 Coût (estimation, proxy)
 
 | KPI | Définition | Source | Note |
 |---|---|---|---|
-| Requêtes HTTP estimées | ≈ nombre d'entrées extraites | `extraction_runs.nb_extraites` | Proxy — pas de facturation cloud sur ce projet |
+| Requêtes HTTP estimées | ≈ nombre d'entrées extraites | `extraction_runs.nb_extraites` | Proxy . pas de facturation cloud sur ce projet |
 | Temps CPU estimé | `nb_requêtes × 1,2 s` (délai de politesse) | Calcul dérivé | Hypothèse documentée dans le code |
 
 ### 3.4 Statut par source (KPI le plus actionnable)
@@ -185,18 +185,18 @@ fichier `streamlit_dashboard.py` — ni `MonitoringService`, ni
 - **Retries** : 3 tentatives par tâche, délai exponentiel
   (`retry_exponential_backoff = True`).
 - **Timeout** : 30 minutes maximum par tâche
-  (`execution_timeout`) — au-delà, la tâche est marquée en échec.
+  (`execution_timeout`) . au-delà, la tâche est marquée en échec.
 - **Panne partielle tolérée** : une source RSS en échec (403, timeout)
   est journalisée en `LEVEL_4_ERROR` mais n'interrompt pas
   l'extraction des autres sources (`exécuter_extraction`).
 - **Rejet propre** : toute entrée invalide (titre/image/label
-  manquant) est comptabilisée avec son motif exact — jamais de
+  manquant) est comptabilisée avec son motif exact . jamais de
   donnée devinée ou silencieusement corrompue.
 
 ### 5.2 Ce qui est manuel aujourd'hui (limite assumée)
 
 - **Notification** : `exécuter_notification()` publie le rapport dans
-  les logs et la console — **aucun email n'est envoyé** dans la
+  les logs et la console . **aucun email n'est envoyé** dans la
   version actuelle. Amélioration identifiée : brancher un
   `EmailOperator` Airflow sur échec du DAG.
 - **Lecture du dashboard** : consultation à la demande, pas de
@@ -213,7 +213,7 @@ fichier `streamlit_dashboard.py` — ni `MonitoringService`, ni
    `uv run python3 scripts/test_feedparser.py`
 4. Si la source est durablement inaccessible (403 permanent,
    changement de structure), documenter la décision (écarter,
-   remplacer) dans le rapport d'exploration (L1) — voir le précédent
+   remplacer) dans le rapport d'exploration (L1) . voir le précédent
    Africa Check → Chequeado.
 
 ---
@@ -239,7 +239,7 @@ réel du projet (point de vigilance de la mission) :
 
 ```bash
 # Le dashboard lit le même .env que le pipeline (mêmes credentials
-# PostgreSQL — CHECKIT_PG_HOST, CHECKIT_PG_PORT, CHECKIT_PG_DB,
+# PostgreSQL . CHECKIT_PG_HOST, CHECKIT_PG_PORT, CHECKIT_PG_DB,
 # CHECKIT_PG_USER, CHECKIT_PG_PASSWORD).
 
 uv pip install streamlit pandas python-dotenv
@@ -250,10 +250,10 @@ uv run streamlit run \
 
 Le navigateur s'ouvre automatiquement sur `http://localhost:8501`.
 Le bouton **🔄 Rafraîchir les données** vide le cache de connexion et
-relit la base — utile après un nouveau run du pipeline.
+relit la base . utile après un nouveau run du pipeline.
 
 ---
 
-*CheckIt.AI — Livrable L7 · Document vivant, à mettre à jour à chaque
+*CheckIt.AI . Livrable L7 · Document vivant, à mettre à jour à chaque
 évolution significative du pipeline (nouvelle source, nouveau seuil,
 nouvelle automatisation).*

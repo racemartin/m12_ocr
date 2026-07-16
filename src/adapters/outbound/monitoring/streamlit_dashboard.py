@@ -362,11 +362,11 @@ def page_vue_densemble(rapport: dict) -> None:
         for source in sources[:6]:
             st.markdown(
                 f"{ÉMOJI_STATUT[source['statut']]} "
-                f"**{source['nom_domaine']}** — "
+                f"**{source['nom_domaine']}** : "
                 f"{source['nb_publications']} publication(s)"
             )
         if len(sources) > 6:
-            st.caption(f"+ {len(sources) - 6} autres sources — "
+            st.caption(f"+ {len(sources) - 6} autres sources : "
                        "voir la page Sources")
 
     # -- Répartition des classes -----------------------------------------------
@@ -568,10 +568,10 @@ def main() -> None:
     }
     routes[page](rapport)
 
-    st.sidebar.caption(
-        f"Livrable L6 — rapport généré le "
-        f"{rapport['généré_le'][:16].replace('T', ' ')} UTC"
-    )
+    # st.sidebar.caption(
+    #     f"Livrable L6 — rapport généré le "
+    #     f"{rapport['généré_le'][:16].replace('T', ' ')} UTC"
+    # )
 
 
 if __name__ == "__main__":
