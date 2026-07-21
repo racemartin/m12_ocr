@@ -532,6 +532,13 @@ Lancement du dashboard web :
 
 ```bash
 uv run streamlit run src/adapters/outbound/monitoring/streamlit_dashboard.py
+
+# Redirige le port 8501 de Windows vers WSL2
+netsh interface portproxy add v4tov4 listenport=8501 listenaddress=0.0.0.0 connectport=8501 connectaddress=172.18.139.119
+
+# Ouvre le port dans le pare-feu Windows
+New-NetFirewallRule -DisplayName "WSL2 Streamlit 8501" -Direction Inbound -LocalPort 8501 -Protocol TCP -Action Allow
+
 ```
 
 Le plan de monitoring (L7) documente les seuils d'alerte, la gestion
