@@ -219,6 +219,15 @@ SELECT 'extraction_runs',              COUNT(*)              FROM extraction_run
 UNION ALL
 SELECT 'run_sources',                  COUNT(*)              FROM run_sources;
 
+\echo '--------------------------------------------------------------------------------'
+\echo 'Q3 — Sources et fraîcheur (obtenir_sources)'
+\echo '--------------------------------------------------------------------------------'
+
+SELECT   nom_domaine, type_source, langue, méthode_extraction,
+         première_extraction, dernière_extraction, nb_publications
+FROM     sources
+ORDER BY nb_publications DESC;
+
 \echo ''
 \echo '================================================================================'
 \echo 'FIN DU RAPPORT DE VÉRIFICATION'

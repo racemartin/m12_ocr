@@ -221,7 +221,8 @@ airflow users create \
 
 ```bash
 # Terminal 1 — Scheduler
-export AIRFLOW_HOME=/mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr/airflow_home
+# export AIRFLOW_HOME=/mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr/airflow_home
+export AIRFLOW_HOME=~/airflow_home_local
 cd /mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr
 source .venv/bin/activate
 airflow scheduler
@@ -229,7 +230,8 @@ airflow scheduler
 
 ```bash
 # Terminal 2 — Webserver
-export AIRFLOW_HOME=/mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr/airflow_home
+# export AIRFLOW_HOME=/mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr/airflow_home
+export AIRFLOW_HOME=~/airflow_home_local
 cd /mnt/c/Users/Public/IAE_DELL/pra_dell/m12_ocr
 source .venv/bin/activate
 airflow webserver --port 8080 --hostname 0.0.0.0
@@ -468,6 +470,35 @@ checkit=> SELECT declared_label, COUNT(*)
 L'**idempotence** est vérifiée : un second lancement sur les mêmes
 données n'insère aucun doublon, tandis qu'un nouveau run est historisé
 dans `extraction_runs`.
+
+### Exécution ciblée d'une tâche (débogage)
+
+Pour déboguer une tâche isolément, sans dépendre du scheduler ni de
+l'UI, la CLI Airflow permet de l'exécuter directement en premier plan :
+
+```bash
+airflow tasks test checkit_etl extraction 2026-07-21
+```
+
+Avantages par rapport à un run déclenché depuis l'UI :
+
+- **Aucune dépendance au scheduler** — s'exécute même si celui-ci
+  n'est pas lancé.
+- **Traceback affiché immédiatement** dans le terminal, sans avoir à
+  chercher le fichier de log correspondant sous `airflow_home/logs/`.
+- **N'écrit aucun état en base** (pas de `DagRun`, pas de tentative
+  comptabilisée) — usage strictement de débogage.
+
+Pour rejouer le pipeline complet en une seule commande (toutes les
+tâches enchaînées, en premier plan, sans scheduler) :
+
+```bash
+airflow dags test checkit_etl 2026-07-21
+```
+
+Cette seconde commande simule un run réel (état persisté), utile pour
+valider l'enchaînement complet sans subir la latence du
+`DagFileProcessorManager` en environnement WSL2/`/mnt/c/`.
 
 ---
 
